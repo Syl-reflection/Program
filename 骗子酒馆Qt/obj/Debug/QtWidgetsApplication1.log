@@ -1,0 +1,6 @@
+﻿   Qt/MSBuild: 3.5.0.0
+  Reading Qt configuration (C:/qt/6.11.0/msvc2022_64/bin/qmake)
+   Qt: 6.11.0
+  main.cpp
+  QtWidgetsApplication1.cpp
+  QtWidgetsApplication1.vcxproj -> C:\Users\Administrator\Desktop\Program\骗子酒馆\骗子酒馆Qt\bin\Debug\LiarsTavern.exe

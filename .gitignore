@@ -1,0 +1,15 @@
+# Visual Studio 临时文件（必须忽略！）
+.vs/
+obj/
+Debug/
+Release/
+*.ipch
+*.db
+*.suo
+*.user
+*.log
+*.pdb
+
+# 编译输出
+*.exe
+*.dll

@@ -5,7 +5,7 @@
 #include <QVector>
 
 class QComboBox;
-class QHBoxLayout;
+class QGridLayout;
 class QLabel;
 class QPushButton;
 class QTextEdit;
@@ -19,12 +19,20 @@ public:
 private:
     enum class Phase { Waiting, Decide, Play, GameOver };
     enum class TavernEvent { None, BartenderRush, DrinkBeforeCatch, FinalTable, ClosingTime };
+    enum class SecretTask { None, DeceiveAtRisk, BaitChallenge, BoldChallenge, DesperateBluff };
+    enum class SecretReward { None, PeekCard, RankScout, PileScout, GamblerAllIn };
 
     struct Player {
         QString name;
         QVector<int> hand;
         bool finished = false;
         int rank = 0;
+        SecretTask task = SecretTask::None;
+        SecretReward reward = SecretReward::None;
+        int completedTasks = 0;
+        int rewardAwardRound = 0;
+        int pendingRewards = 0;
+        bool gamblingBan = false;
     };
 
     struct Claim {
@@ -32,6 +40,8 @@ private:
         int declarer = -1;
         QVector<int> cards;
         int declaredRank = 0;
+        int pileSizeBeforePlay = 0;
+        int declarerHandSizeBeforePlay = 0;
     };
 
     QVector<Player> players_;
@@ -46,22 +56,29 @@ private:
     int gameId_ = 0;
     int roundNumber_ = 0;
     int playsSinceLastRank_ = 0;
+    int allInChallenger_ = -1;
     bool pendingBartenderRush_ = false;
     bool pendingDrinkBeforeCatch_ = false;
+    bool tableActionImportant_ = false;
+    QString tableActionText_;
     QVector<bool> selected_;
 
     QLabel *titleLabel_ = nullptr;
     QLabel *phaseLabel_ = nullptr;
     QLabel *eventLabel_ = nullptr;
+    QLabel *actionLabel_ = nullptr;
     QLabel *opponentLabels_[3] = { nullptr, nullptr, nullptr };
     QLabel *playerInfoLabel_ = nullptr;
+    QLabel *taskLabel_ = nullptr;
+    QLabel *rewardLabel_ = nullptr;
     QLabel *claimLabel_ = nullptr;
     QLabel *rankingLabel_ = nullptr;
-    QHBoxLayout *handLayout_ = nullptr;
+    QGridLayout *handLayout_ = nullptr;
     QComboBox *rankCombo_ = nullptr;
     QPushButton *playButton_ = nullptr;
     QPushButton *believeButton_ = nullptr;
     QPushButton *challengeButton_ = nullptr;
+    QPushButton *rewardButton_ = nullptr;
     QPushButton *restartButton_ = nullptr;
     QTextEdit *logEdit_ = nullptr;
 
@@ -76,7 +93,8 @@ private:
     void onPlayClicked();
     void onBelieveClicked();
     void onChallengeClicked();
-    void resolveChallenge(int challenger);
+    void onRewardClicked();
+    void resolveChallenge(int challenger, bool allIn = false);
     void confirmFinishedPlayer(int playerIndex);
     bool finishGameIfReady();
     void recordValidPlay(int cardCount);
@@ -86,18 +104,37 @@ private:
     void updateEventAfterRank();
     int minimumPlayCount(int playerIndex) const;
     int maximumPlayCount(int playerIndex) const;
-    bool challengeAllowed() const;
+    int truthfulPlayCapacity(int playerIndex) const;
+    bool challengeAllowed(int challenger) const;
     int activePlayerCount() const;
+
+    void assignRandomTask(int playerIndex);
+    void completeSecretTask(int playerIndex);
+    void checkBeliefTask(int declarer);
+    void checkChallengeTasks(int challenger, bool truthful, int settledPileSize);
+    void grantRandomReward(int playerIndex);
+    void grantPendingReward(int playerIndex);
+    void consumeReward(int playerIndex);
+    void expireRewardsForNewRound();
+    void aiUseInformationReward(int playerIndex, int &suspicion);
+    bool rewardUsable(int playerIndex) const;
+    void handleAllInResult(int challenger, bool success);
 
     void updateUi();
     void rebuildHandButtons();
+    void showTableAction(const QString &text, bool important = false);
     void setPhase(Phase phase, const QString &text);
     void addLog(const QString &text);
     int nextActive(int from) const;
     bool claimIsTrue() const;
+    bool cardsMatchClaim(const QVector<int> &cards, int declaredRank) const;
     QString cardName(int rank) const;
     QString playerStatusText(const Player &player) const;
     QString rankingSummary() const;
     QString eventName(TavernEvent event) const;
     QString eventDescription(TavernEvent event) const;
+    QString taskName(SecretTask task) const;
+    QString taskDescription(SecretTask task) const;
+    QString rewardName(SecretReward reward) const;
+    QString rewardDescription(SecretReward reward) const;
 };

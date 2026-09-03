@@ -1,20 +1,22 @@
 #include "QtWidgetsApplication1.h"
 
 #include <QApplication>
+#include <QColor>
 #include <QComboBox>
+#include <QFrame>
+#include <QGraphicsDropShadowEffect>
 #include <QGridLayout>
-#include <QGroupBox>
-#include <QHBoxLayout>
 #include <QInputDialog>
 #include <QLabel>
 #include <QMessageBox>
+#include <QProgressBar>
 #include <QPushButton>
 #include <QRandomGenerator>
 #include <QScrollBar>
 #include <QStringList>
 #include <QTextEdit>
 #include <QTimer>
-#include <QVBoxLayout>
+#include <QVariantAnimation>
 #include <algorithm>
 #include <functional>
 
@@ -25,41 +27,39 @@
 namespace {
 constexpr int Human = 0;
 constexpr int PlayerCount = 4;
+constexpr int RankCount = 7;
+constexpr int CardsPerRank = 6;
+constexpr int JokerCount = 2;
+constexpr int JokerRank = RankCount;
+constexpr int DeckSize = RankCount * CardsPerRank + JokerCount;
+constexpr int InitialHandSize = DeckSize / PlayerCount;
+constexpr int MaxPlayCards = 3;
+constexpr int HandColumns = 14;
 
-// 牌面编码：0=8 1=9 2=10 3=J 4=Q 5=K 6=A 7=Joker
-constexpr int RankCount = 7;                                  // 普通牌面种类
-constexpr int CardsPerRank = 6;                               // 每种普通牌面的张数
-constexpr int JokerCount = 2;                                 // 癞子牌张数
-constexpr int JokerRank = RankCount;                          // Joker 的编码 = 7
-constexpr int DeckSize = RankCount * CardsPerRank + JokerCount; // 44 张
-constexpr int InitialHandSize = DeckSize / PlayerCount;        // 每人 11 张
-constexpr int MaxPlayCards = 3;                               // 每次最多出牌张数
-constexpr int HandColumns = 8;                                // 手牌区每行显示的牌数
+constexpr int DeceivePileRequirement = 10;
+constexpr int BaitPileRequirement = 10;
+constexpr int BoldPileRequirement = 14;
+constexpr int DesperateHandMin = 7;
+constexpr int DesperateHandMax = 10;
 
-// 秘密任务门槛（按 44 张牌局重新配平）
-constexpr int DeceivePileRequirement = 10;   // 瞒天过海：出牌前牌堆至少 10 张
-constexpr int BaitPileRequirement = 10;      // 请你抓我：出牌前牌堆至少 10 张
-constexpr int BoldPileRequirement = 14;      // 胆大包天：质疑时牌堆至少 14 张
-constexpr int DesperateHandMin = 7;          // 孤注一掷：出牌前手中至少 7 张
-constexpr int DesperateHandMax = 10;         // 孤注一掷：出牌前手中至多 10 张
+constexpr int ConservativePlayWindow = 8;
+constexpr int ConservativePlayNeed = 6;
+constexpr int ConservativePlayMaxCards = 2;
+constexpr int SmallPileRounds = 3;
+constexpr int SmallPileMax = 7;
+constexpr int DrinkChallengePile = 8;
+constexpr int ClosingTimePlays = 30;
+constexpr int AiThinkDelayMs = 3200;
+constexpr int AiThinkSpectatorDelayMs = 4200;
+constexpr int AiOpeningPlayDelayMs = 1400;
+constexpr int AiOpeningPlaySpectatorDelayMs = 1900;
+constexpr int AiDecisionDisplayMs = 3200;
+constexpr int AiDecisionSpectatorDisplayMs = 4200;
+constexpr int AiChallengeDisplayMs = 3200;
+constexpr int AiChallengeSpectatorDisplayMs = 4200;
+constexpr int AiSettlementDisplayMs = 3800;
+constexpr int AiSettlementSpectatorDisplayMs = 4800;
 
-// 动态酒馆事件门槛（按 44 张牌局重新配平）
-constexpr int ConservativePlayWindow = 8;    // 酒保催单：统计最近 8 次有效出牌
-constexpr int ConservativePlayNeed = 6;      // 酒保催单：其中至少 6 次保守出牌
-constexpr int ConservativePlayMaxCards = 2;  // 酒保催单：判定为保守出牌的张数上限
-constexpr int SmallPileRounds = 3;           // 先喝再抓：连续 3 轮牌堆偏小
-constexpr int SmallPileMax = 7;              // 先喝再抓：判定为偏小的牌堆张数上限
-constexpr int DrinkChallengePile = 8;        // 先喝再抓：牌堆达到 8 张才允许质疑
-constexpr int ClosingTimePlays = 30;         // 酒馆打烊：连续 30 次有效出牌无新名次
-
-QString panelStyle()
-{
-    return "QGroupBox { color:#f4d58d; border:1px solid #7b5e3b; border-radius:10px; "
-           "margin-top:12px; padding:10px; font-weight:bold; } "
-           "QGroupBox::title { subcontrol-origin:margin; left:12px; padding:0 6px; }";
-}
-
-// 侦查类奖励可选的牌型列表，返回值下标与牌面编码一一对应
 QStringList rankChoices()
 {
     return { QStringLiteral("8"), QStringLiteral("9"), QStringLiteral("10"),
@@ -77,148 +77,124 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
 
 void QtWidgetsApplication1::buildUi()
 {
-    setWindowTitle(QStringLiteral("虎牌：四人唬牌 · 秘密任务与动态事件排名赛"));
-    resize(1260, 1000);
-    setMinimumSize(1050, 860);
+    ui.setupUi(this);
 
-    auto *central = new QWidget(this);
-    auto *root = new QVBoxLayout(central);
-    root->setContentsMargins(22, 18, 22, 18);
-    root->setSpacing(12);
+    titleLabel_ = ui.titleLabel;
+    phaseLabel_ = ui.phaseLabel;
+    eventLabel_ = ui.eventLabel;
+    actionLabel_ = ui.actionLabel;
+    opponentLabels_[0] = ui.opponentLabel1;
+    opponentLabels_[1] = ui.opponentLabel2;
+    opponentLabels_[2] = ui.opponentLabel3;
+    playerInfoLabel_ = ui.playerInfoLabel;
+    taskLabel_ = ui.taskLabel;
+    rewardLabel_ = ui.rewardLabel;
+    claimLabel_ = ui.claimLabel;
+    rankingLabel_ = ui.rankingLabel;
+    tableCardLabels_[0] = ui.tableCard1;
+    tableCardLabels_[1] = ui.tableCard2;
+    tableCardLabels_[2] = ui.tableCard3;
+    tableCardStatusLabel_ = ui.tableCardStatusLabel;
+    playerSeatFrames_[0] = ui.humanPanel;
+    playerSeatFrames_[1] = ui.opponentSeat1;
+    playerSeatFrames_[2] = ui.opponentSeat2;
+    playerSeatFrames_[3] = ui.opponentSeat3;
+    playerAvatarLabels_[0] = ui.humanAvatarLabel;
+    playerAvatarLabels_[1] = ui.opponentAvatar1;
+    playerAvatarLabels_[2] = ui.opponentAvatar2;
+    playerAvatarLabels_[3] = ui.opponentAvatar3;
+    playerCountLabels_[0] = ui.humanCountLabel;
+    playerCountLabels_[1] = ui.opponentCount1;
+    playerCountLabels_[2] = ui.opponentCount2;
+    playerCountLabels_[3] = ui.opponentCount3;
+    playerRankBadges_[0] = ui.humanRankBadge;
+    playerRankBadges_[1] = ui.opponentRankBadge1;
+    playerRankBadges_[2] = ui.opponentRankBadge2;
+    playerRankBadges_[3] = ui.opponentRankBadge3;
+    decisionActionPanel_ = ui.decisionActionPanel;
+    aiProgressBar_ = ui.aiProgressBar;
+    handLayout_ = ui.handGridLayout;
+    rankCombo_ = ui.rankCombo;
+    playButton_ = ui.playButton;
+    believeButton_ = ui.believeButton;
+    challengeButton_ = ui.challengeButton;
+    rewardButton_ = ui.rewardButton;
+    restartButton_ = ui.restartButton;
+    logEdit_ = ui.logEdit;
 
-    titleLabel_ = new QLabel(QStringLiteral("虎牌 · 四人唬牌 · 秘密任务与动态事件排名赛"));
-    titleLabel_->setAlignment(Qt::AlignCenter);
-    titleLabel_->setStyleSheet("font-size:28px; font-weight:800; color:#f6c85f; letter-spacing:2px;");
-    root->addWidget(titleLabel_);
+    handLayout_->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    aiProgressBar_->hide();
+    clearTableCards();
 
-    auto *opponents = new QHBoxLayout;
-    for (int i = 0; i < 3; ++i) {
-        opponentLabels_[i] = new QLabel;
-        opponentLabels_[i]->setAlignment(Qt::AlignCenter);
-        opponentLabels_[i]->setMinimumHeight(88);
-        opponentLabels_[i]->setStyleSheet("background:#252a34; border:1px solid #555; border-radius:10px; padding:8px;");
-        opponents->addWidget(opponentLabels_[i]);
+    for (int i = 0; i < PlayerCount; ++i) {
+        playerGlowEffects_[i] = new QGraphicsDropShadowEffect(this);
+        playerGlowEffects_[i]->setOffset(0, 0);
+        playerGlowEffects_[i]->setBlurRadius(0);
+        playerGlowEffects_[i]->setColor(QColor(240, 178, 62, 0));
+        playerAvatarLabels_[i]->setGraphicsEffect(playerGlowEffects_[i]);
     }
-    root->addLayout(opponents);
+    turnGlowAnimation_ = new QVariantAnimation(this);
+    turnGlowAnimation_->setDuration(800);
+    turnGlowAnimation_->setStartValue(0.0);
+    turnGlowAnimation_->setKeyValueAt(0.5, 1.0);
+    turnGlowAnimation_->setEndValue(0.0);
+    turnGlowAnimation_->setLoopCount(-1);
+    connect(turnGlowAnimation_, &QVariantAnimation::valueChanged, this, [this](const QVariant &value) {
+        const qreal pulse = value.toReal();
+        for (int i = 0; i < PlayerCount; ++i) {
+            if (!playerGlowEffects_[i])
+                continue;
+            const bool glowing = i == glowingPlayer_;
+            playerGlowEffects_[i]->setBlurRadius(glowing ? 25.0 + pulse * 13.0 : 0.0);
+            playerGlowEffects_[i]->setColor(glowing
+                ? QColor(246, 187, 67, 175 + static_cast<int>(pulse * 55.0))
+                : QColor(0, 0, 0, 0));
+        }
+    });
+    turnGlowAnimation_->start();
 
-    auto *middle = new QHBoxLayout;
-    middle->setSpacing(12);
-
-    auto *tableBox = new QGroupBox(QStringLiteral("牌桌"));
-    tableBox->setStyleSheet(panelStyle());
-    auto *tableLayout = new QVBoxLayout(tableBox);
-    phaseLabel_ = new QLabel;
-    phaseLabel_->setAlignment(Qt::AlignCenter);
-    phaseLabel_->setWordWrap(true);
-    phaseLabel_->setStyleSheet("font-size:19px; color:#ffffff; padding:8px;");
-    eventLabel_ = new QLabel;
-    eventLabel_->setAlignment(Qt::AlignCenter);
-    eventLabel_->setWordWrap(true);
-    eventLabel_->setStyleSheet("background:#3b2f1f; border:1px solid #d6a756; border-radius:8px; color:#ffe0a3; padding:7px; font-weight:bold;");
-    claimLabel_ = new QLabel(QStringLiteral("尚无声明"));
-    claimLabel_->setAlignment(Qt::AlignCenter);
-    claimLabel_->setWordWrap(true);
-    claimLabel_->setMinimumHeight(90);
-    claimLabel_->setStyleSheet("background:#173f35; border:2px solid #c69c55; border-radius:12px; font-size:20px; padding:14px;");
-    actionLabel_ = new QLabel(QStringLiteral("【牌桌即时行动】\n等待游戏开始……"));
-    actionLabel_->setAlignment(Qt::AlignCenter);
-    actionLabel_->setWordWrap(true);
-    actionLabel_->setMinimumHeight(92);
-    actionLabel_->setStyleSheet("background:#1d2d44; border:2px solid #5b8db8; border-radius:12px; color:#e8f4ff; font-size:18px; font-weight:bold; padding:12px;");
-    tableLayout->addWidget(phaseLabel_);
-    tableLayout->addWidget(eventLabel_);
-    tableLayout->addWidget(claimLabel_, 1);
-    tableLayout->addWidget(actionLabel_);
-
-    auto *decisionRow = new QHBoxLayout;
-    believeButton_ = new QPushButton(QStringLiteral("相信，轮到我出牌"));
-    challengeButton_ = new QPushButton(QStringLiteral("质疑，立即揭牌"));
-    decisionRow->addWidget(believeButton_);
-    decisionRow->addWidget(challengeButton_);
-    tableLayout->addLayout(decisionRow);
-    middle->addWidget(tableBox, 3);
-
-    auto *logBox = new QGroupBox(QStringLiteral("对局记录"));
-    logBox->setStyleSheet(panelStyle());
-    auto *logLayout = new QVBoxLayout(logBox);
-    logEdit_ = new QTextEdit;
-    logEdit_->setReadOnly(true);
-    logEdit_->setStyleSheet("background:#17191f; border:none; color:#ddd; font-size:14px;");
-    logLayout->addWidget(logEdit_);
-    middle->addWidget(logBox, 2);
-    root->addLayout(middle, 1);
-
-    auto *humanBox = new QGroupBox(
-        QStringLiteral("你的手牌（点击选择 1–%1 张，超出 %2 张自动换行）")
-            .arg(MaxPlayCards).arg(HandColumns));
-    humanBox->setStyleSheet(panelStyle());
-    auto *humanLayout = new QVBoxLayout(humanBox);
-    playerInfoLabel_ = new QLabel;
-    rankingLabel_ = new QLabel;
-    rankingLabel_->setWordWrap(true);
-    rankingLabel_->setStyleSheet("color:#cbd5e1;");
-    humanLayout->addWidget(playerInfoLabel_);
-    humanLayout->addWidget(rankingLabel_);
-
-    auto *secretRow = new QHBoxLayout;
-    taskLabel_ = new QLabel;
-    taskLabel_->setWordWrap(true);
-    taskLabel_->setMinimumHeight(62);
-    taskLabel_->setStyleSheet("background:#27213c; border:1px solid #7868a6; border-radius:8px; padding:8px; color:#e9ddff;");
-    rewardLabel_ = new QLabel;
-    rewardLabel_->setWordWrap(true);
-    rewardLabel_->setMinimumHeight(62);
-    rewardLabel_->setStyleSheet("background:#173f35; border:1px solid #4e8b78; border-radius:8px; padding:8px; color:#d9fff1;");
-    rewardButton_ = new QPushButton(QStringLiteral("使用秘密奖励"));
-    rewardButton_->setMinimumWidth(145);
-    secretRow->addWidget(taskLabel_, 3);
-    secretRow->addWidget(rewardLabel_, 3);
-    secretRow->addWidget(rewardButton_);
-    humanLayout->addLayout(secretRow);
-
-    handLayout_ = new QGridLayout;
-    handLayout_->setAlignment(Qt::AlignLeft);
-    handLayout_->setContentsMargins(0, 0, 0, 0);
-    handLayout_->setSpacing(6);
-    humanLayout->addLayout(handLayout_);
-
-    auto *actionRow = new QHBoxLayout;
-    actionRow->addWidget(new QLabel(QStringLiteral("声明牌面：")));
-    rankCombo_ = new QComboBox;
-    rankCombo_->addItems(rankChoices().mid(0, RankCount));
-    actionRow->addWidget(rankCombo_);
-    playButton_ = new QPushButton(QStringLiteral("盖牌并作出声明"));
-    restartButton_ = new QPushButton(QStringLiteral("重新开始"));
-    actionRow->addWidget(playButton_, 1);
-    actionRow->addStretch();
-    actionRow->addWidget(restartButton_);
-    humanLayout->addLayout(actionRow);
-    root->addWidget(humanBox);
-
-    setCentralWidget(central);
-    setStyleSheet(
-        "QMainWindow, QWidget { background:#101319; color:#f2f2f2; font-family:'Microsoft YaHei UI'; }"
-        "QPushButton { background:#7c2d2d; color:white; border:1px solid #b45353; border-radius:7px; padding:9px 14px; font-weight:bold; }"
-        "QPushButton:hover { background:#9f3a3a; } QPushButton:disabled { background:#343840; color:#777; border-color:#444; }"
-        "QComboBox { background:#252a34; border:1px solid #777; border-radius:6px; padding:7px 20px 7px 10px; min-width:80px; }"
-    );
+    aiProgressTimer_ = new QTimer(this);
+    aiProgressTimer_->setInterval(100);
+    connect(aiProgressTimer_, &QTimer::timeout, this, [this] {
+        if (!aiProgressBar_ || aiProgressDurationMs_ <= 0) {
+            stopAiProgress();
+            return;
+        }
+        aiProgressElapsedMs_ = std::min(aiProgressElapsedMs_ + 100, aiProgressDurationMs_);
+        aiProgressBar_->setValue(aiProgressElapsedMs_);
+        const int remainingMs = std::max(0, aiProgressDurationMs_ - aiProgressElapsedMs_);
+        aiProgressBar_->setFormat(QStringLiteral("⏳ %1　剩余 %2 秒")
+            .arg(aiProgressStageText_)
+            .arg(remainingMs / 1000.0, 0, 'f', 1));
+        if (aiProgressElapsedMs_ >= aiProgressDurationMs_)
+            aiProgressTimer_->stop();
+    });
 
     connect(playButton_, &QPushButton::clicked, this, [this] { onPlayClicked(); });
     connect(believeButton_, &QPushButton::clicked, this, [this] { onBelieveClicked(); });
     connect(challengeButton_, &QPushButton::clicked, this, [this] { onChallengeClicked(); });
     connect(rewardButton_, &QPushButton::clicked, this, [this] { onRewardClicked(); });
     connect(restartButton_, &QPushButton::clicked, this, [this] { startGame(); });
+    connect(ui.exitButton, &QPushButton::clicked, this, &QWidget::close);
+    connect(ui.rulesButton, &QPushButton::clicked, this, [this] {
+        QMessageBox::information(this, QStringLiteral("规则说明"),
+            QStringLiteral("目标：尽快出完手牌，按出完顺序获得第 1–4 名。\n\n"
+                           "出牌：选择 1–3 张牌，再声明它们是同一种点数。\n"
+                           "判断：下家可以相信或质疑；质疑后根据实际牌面判定谁收走中央牌堆。\n"
+                           "机制：每轮可能触发动态酒馆事件，完成秘密任务可获得一次性奖励。"));
+    });
 }
 
 void QtWidgetsApplication1::startGame()
 {
     ++gameId_;
+    stopAiProgress();
     players_.clear();
     players_.resize(PlayerCount);
-    players_[0].name = QStringLiteral("你");
-    players_[1].name = QStringLiteral("电脑·红狐");
-    players_[2].name = QStringLiteral("电脑·灰狼");
-    players_[3].name = QStringLiteral("电脑·夜鸦");
+    players_[0].name = QStringLiteral("玩家1（你）");
+    players_[1].name = QStringLiteral("玩家2");
+    players_[2].name = QStringLiteral("玩家3");
+    players_[3].name = QStringLiteral("玩家4");
     for (Player &player : players_) {
         player.hand.clear();
         player.finished = false;
@@ -246,6 +222,8 @@ void QtWidgetsApplication1::startGame()
     pendingDrinkBeforeCatch_ = false;
     tableActionImportant_ = false;
     tableActionText_.clear();
+    presentedEventCode_ = -1;
+    clearTableCards();
     dealHands();
     for (int i = 0; i < players_.size(); ++i)
         assignRandomTask(i);
@@ -253,8 +231,8 @@ void QtWidgetsApplication1::startGame()
 
     logEdit_->clear();
     addLog(QStringLiteral("四人对局开始：所有玩家的开局条件与操作规则完全相同。"));
-    addLog(QStringLiteral("牌库包含 8、9、10、J、Q、K、A 各 6 张及 2 张 Joker 癞子牌，共 %1 张；Joker 可充当任意声明牌面。")
-               .arg(DeckSize));
+    addLog(QStringLiteral("牌库包含 8、9、10、J、Q、K、A 各 %1 张及 %2 张 Joker，共 %3 张；Joker 可充当任意声明牌面。")
+               .arg(CardsPerRank).arg(JokerCount).arg(DeckSize));
     addLog(QStringLiteral("每人获得 %1 张牌。率先出完手牌者获得第 1 名，其余玩家继续争夺后续名次。")
                .arg(InitialHandSize));
     addLog(QStringLiteral("选择相信后，盖牌会留在中央牌池；质疑判断失败者收走整个中央牌池。"));
@@ -292,6 +270,7 @@ void QtWidgetsApplication1::startNewRound(int starter)
     expireRewardsForNewRound();
     claim_ = Claim{};
     tablePile_.clear();
+    clearTableCards();
     chooseEventForNewRound();
     addLog(QStringLiteral("—— 第 %1 轮开始 ——").arg(roundNumber_));
     const int actualStarter = players_[starter].finished ? nextActive(starter) : starter;
@@ -302,8 +281,15 @@ void QtWidgetsApplication1::startNewRound(int starter)
 
 void QtWidgetsApplication1::beginTurn(int playerIndex)
 {
-    if (phase_ == Phase::GameOver)
+    if (phase_ == Phase::GameOver || players_.isEmpty())
         return;
+    if (playerIndex < 0 || playerIndex >= players_.size())
+        playerIndex = Human;
+    if (claim_.valid && (claim_.cards.isEmpty()
+        || claim_.declarer < 0 || claim_.declarer >= players_.size())) {
+        addLog(QStringLiteral("检测到无效声明状态，系统已自动清除该声明。"));
+        claim_ = Claim{};
+    }
     if (players_[playerIndex].finished)
         playerIndex = nextActive(playerIndex);
 
@@ -312,16 +298,25 @@ void QtWidgetsApplication1::beginTurn(int playerIndex)
     if (playerIndex == Human) {
         beginHumanTurn();
     } else {
+        const QString analysisTarget = claim_.valid
+            ? QStringLiteral("上一份声明和当前手牌")
+            : QStringLiteral("当前手牌并规划出牌");
         const QString phaseText = players_[Human].finished
-            ? QStringLiteral("【观战模式】你已获得第 %1 名 · %2 正在思考……")
-                  .arg(players_[Human].rank).arg(players_[playerIndex].name)
-            : QStringLiteral("%1 正在思考……").arg(players_[playerIndex].name);
+            ? QStringLiteral("【观战模式 · 电脑决策阶段】\n你已获得第 %1 名，%2 正在认真分析%3……")
+                  .arg(players_[Human].rank).arg(players_[playerIndex].name).arg(analysisTarget)
+            : QStringLiteral("【电脑决策阶段】\n%1 正在分析%2，请稍候……")
+                  .arg(players_[playerIndex].name, analysisTarget);
         setPhase(Phase::Waiting, phaseText);
         updateUi();
         const int expectedGame = gameId_;
-        const int thinkDelay = players_[Human].finished ? 1350 : 700;
-        QTimer::singleShot(thinkDelay, this, [this, expectedGame] {
-            if (expectedGame == gameId_)
+        const int expectedPlayer = playerIndex;
+        const int thinkDelay = players_[Human].finished
+            ? AiThinkSpectatorDelayMs : AiThinkDelayMs;
+        startAiProgress(thinkDelay, QStringLiteral("%1 正在思考")
+            .arg(players_[playerIndex].name));
+        QTimer::singleShot(thinkDelay, this, [this, expectedGame, expectedPlayer] {
+            if (expectedGame == gameId_ && currentPlayer_ == expectedPlayer
+                && phase_ == Phase::Waiting && !players_[expectedPlayer].finished)
                 runAiTurn();
         });
     }
@@ -335,7 +330,8 @@ void QtWidgetsApplication1::beginHumanTurn()
         else if (challengeAllowed(Human))
             setPhase(Phase::Decide, QStringLiteral("轮到你判断：相信 %1，还是质疑并揭牌？").arg(players_[claim_.declarer].name));
         else
-            setPhase(Phase::Decide, QStringLiteral("【先喝再抓】中央牌池不足 5 张，本次只能相信。"));
+            setPhase(Phase::Decide, QStringLiteral("【先喝再抓】中央牌池不足 %1 张，本次只能相信。")
+                .arg(DrinkChallengePile));
     } else {
         const int minimum = minimumPlayCount(Human);
         const int maximum = maximumPlayCount(Human);
@@ -358,15 +354,11 @@ void QtWidgetsApplication1::runAiTurn()
     const int ai = currentPlayer_;
     const bool decidedOnClaim = claim_.valid;
     if (claim_.valid) {
-        // 由 3 种牌面扩展到 7 种后，单种牌面的期望持有量从 3.3 张降到 2 张：
-        // 小牌数声明更容易做到真实，大牌数声明更难，因此降低基础值、提高张数权重。
-        // 1 张约 31%，2 张约 48%，3 张约 65%，与实际的造假难度大致吻合。
         int suspicion = 14 + static_cast<int>(claim_.cards.size()) * 17;
         int knownDeclared = 0;
         for (int card : players_[ai].hand)
             if (card == claim_.declaredRank || card == JokerRank)
                 ++knownDeclared;
-        // 自己手里同牌面越多，对方声明真实的可能性越低
         suspicion += knownDeclared * 5;
         if (players_[claim_.declarer].hand.isEmpty())
             suspicion += 10;
@@ -389,18 +381,22 @@ void QtWidgetsApplication1::runAiTurn()
                 showTableAction(QStringLiteral("%1 选择【质疑】！\n正在揭开 %2 刚才打出的牌……")
                                     .arg(players_[ai].name, players_[claim_.declarer].name), true);
             }
-            if (players_[Human].finished) {
-                setPhase(Phase::Waiting, QStringLiteral("【观战模式】%1 已选择质疑，马上揭牌……")
-                    .arg(players_[ai].name));
-                updateUi();
-                const int expectedGame = gameId_;
-                QTimer::singleShot(1200, this, [this, ai, useAllIn, expectedGame] {
-                    if (expectedGame == gameId_ && currentPlayer_ == ai && claim_.valid)
-                        resolveChallenge(ai, useAllIn);
-                });
-            } else {
-                resolveChallenge(ai, useAllIn);
-            }
+            setPhase(Phase::Waiting, players_[Human].finished
+                ? QStringLiteral("【观战模式 · 电脑决策结果】\n%1 选择了质疑，稍后将揭开 %2 的牌。")
+                      .arg(players_[ai].name, players_[claim_.declarer].name)
+                : QStringLiteral("【电脑决策结果】\n%1 选择了质疑，正在等待揭牌判定。")
+                      .arg(players_[ai].name));
+            updateUi();
+            const int expectedGame = gameId_;
+            const int challengeDelay = players_[Human].finished
+                ? AiChallengeSpectatorDisplayMs : AiChallengeDisplayMs;
+            startAiProgress(challengeDelay, QStringLiteral("%1 已决定质疑，等待揭牌")
+                .arg(players_[ai].name));
+            QTimer::singleShot(challengeDelay, this, [this, ai, useAllIn, expectedGame] {
+                if (expectedGame == gameId_ && currentPlayer_ == ai
+                    && phase_ == Phase::Waiting && claim_.valid)
+                    resolveChallenge(ai, useAllIn);
+            });
             return;
         }
 
@@ -412,7 +408,13 @@ void QtWidgetsApplication1::runAiTurn()
             ? QStringLiteral("%1 选择【相信】%2 的声明。\n中央牌池继续保留，现在轮到 %1 出牌。")
                   .arg(players_[ai].name, players_[claim_.declarer].name)
             : QStringLiteral("%1 当前不能质疑，只能【相信】%2。\n中央牌池继续保留，现在轮到 %1 出牌。")
-                  .arg(players_[ai].name, players_[claim_.declarer].name));
+                  .arg(players_[ai].name, players_[claim_.declarer].name), true);
+        setPhase(Phase::Waiting, players_[Human].finished
+            ? QStringLiteral("【观战模式 · 电脑决策结果】\n%1 选择了相信；该结果会停留显示，然后由它出牌。")
+                  .arg(players_[ai].name)
+            : QStringLiteral("【电脑决策结果】\n%1 选择了相信；稍后轮到它继续出牌。")
+                  .arg(players_[ai].name));
+        updateUi();
         checkBeliefTask(claim_.declarer);
         if (players_[claim_.declarer].hand.isEmpty()) {
             confirmFinishedPlayer(claim_.declarer);
@@ -424,10 +426,22 @@ void QtWidgetsApplication1::runAiTurn()
 
     const int expectedGame = gameId_;
     const int actionDelay = players_[Human].finished
-        ? (decidedOnClaim ? 1150 : 450)
-        : 400;
-    QTimer::singleShot(actionDelay, this, [this, expectedGame] {
-        if (expectedGame == gameId_)
+        ? (decidedOnClaim ? AiDecisionSpectatorDisplayMs : AiOpeningPlaySpectatorDelayMs)
+        : (decidedOnClaim ? AiDecisionDisplayMs : AiOpeningPlayDelayMs);
+    if (!decidedOnClaim) {
+        setPhase(Phase::Waiting, players_[Human].finished
+            ? QStringLiteral("【观战模式 · 电脑决策结果】\n%1 已完成分析，正在选择要打出的手牌。")
+                  .arg(players_[ai].name)
+            : QStringLiteral("【电脑决策结果】\n%1 已完成分析，正在准备出牌。")
+                  .arg(players_[ai].name));
+        updateUi();
+    }
+    startAiProgress(actionDelay, decidedOnClaim
+        ? QStringLiteral("决策结果展示中，稍后出牌")
+        : QStringLiteral("%1 正在准备出牌").arg(players_[ai].name));
+    QTimer::singleShot(actionDelay, this, [this, ai, expectedGame] {
+        if (expectedGame == gameId_ && currentPlayer_ == ai
+            && phase_ == Phase::Waiting && !players_[ai].finished)
             aiPlay();
     });
 }
@@ -447,6 +461,7 @@ void QtWidgetsApplication1::aiPlay()
         for (int i = 0; i < player.hand.size(); ++i)
             if (player.hand[i] == rank || player.hand[i] == JokerRank)
                 result.append(i);
+        std::shuffle(result.begin(), result.end(), *QRandomGenerator::global());
         return result;
     };
 
@@ -473,14 +488,51 @@ void QtWidgetsApplication1::aiPlay()
         count = std::min(count, static_cast<int>(matching.size()));
         indices = matching.mid(0, count);
     } else {
-        for (int i = 0; i < player.hand.size() && indices.size() < count; ++i) {
-            if (player.hand[i] != declared && player.hand[i] != JokerRank)
-                indices.append(i);
+        QVector<int> shuffled;
+        for (int i = 0; i < player.hand.size(); ++i)
+            shuffled.append(i);
+        std::shuffle(shuffled.begin(), shuffled.end(), *QRandomGenerator::global());
+        for (int index : shuffled) {
+            if (indices.size() >= count)
+                break;
+            if (player.hand[index] != declared && player.hand[index] != JokerRank)
+                indices.append(index);
         }
-        for (int i = 0; i < player.hand.size() && indices.size() < count; ++i) {
-            if (!indices.contains(i))
-                indices.append(i);
+        for (int index : shuffled) {
+            if (indices.size() >= count)
+                break;
+            if (!indices.contains(index))
+                indices.append(index);
         }
+    }
+
+    if (!isLegalPlaySelection(ai, indices, declared)) {
+        indices.clear();
+        const int fallbackCount = minimumPlayCount(ai);
+        if (mustTellTruth) {
+            declared = 0;
+            matching = matchingIndices(declared);
+            for (int rank = 1; rank < RankCount; ++rank) {
+                const QVector<int> candidate = matchingIndices(rank);
+                if (candidate.size() > matching.size()) {
+                    declared = rank;
+                    matching = candidate;
+                }
+            }
+            indices = matching.mid(0, fallbackCount);
+        } else {
+            declared = QRandomGenerator::global()->bounded(RankCount);
+            for (int i = 0; i < player.hand.size(); ++i)
+                indices.append(i);
+            std::shuffle(indices.begin(), indices.end(), *QRandomGenerator::global());
+            indices = indices.mid(0, fallbackCount);
+        }
+    }
+    if (!isLegalPlaySelection(ai, indices, declared)) {
+        setPhase(Phase::GameOver, QStringLiteral("检测到异常的电脑出牌状态，本局已安全停止。"));
+        addLog(QStringLiteral("电脑出牌合法性校验未通过，系统已阻止该操作。"));
+        updateUi();
+        return;
     }
 
     const int pileSizeBeforePlay = tablePile_.size();
@@ -504,8 +556,9 @@ void QtWidgetsApplication1::aiPlay()
     recordValidPlay(cards.size());
     addLog(QStringLiteral("%1 盖下 %2 张牌，声明：%2 张 %3。")
                .arg(player.name).arg(cards.size()).arg(cardName(declared)));
-    showTableAction(QStringLiteral("%1 完成出牌：\n盖下 %2 张牌，并声明“%2 张 %3”。")
+    showTableAction(QStringLiteral("【电脑出牌】%1 完成出牌：\n盖下 %2 张牌，并声明“%2 张 %3”。")
                         .arg(player.name).arg(cards.size()).arg(cardName(declared)));
+    showTableCards(claim_.cards, false);
     if (mustTellTruth) {
         player.gamblingBan = false;
         addLog(QStringLiteral("%1 已完成下一次真实出牌，禁赌状态解除。").arg(player.name));
@@ -542,6 +595,11 @@ void QtWidgetsApplication1::onPlayClicked()
                            "所选牌必须都是声明牌型或 Joker。"));
         return;
     }
+    if (!isLegalPlaySelection(Human, indices, declaredRank)) {
+        QMessageBox::warning(this, QStringLiteral("不能出牌"),
+            QStringLiteral("本次出牌未通过规则校验，请重新选择手牌和声明牌型。"));
+        return;
+    }
 
     claim_ = Claim{};
     claim_.valid = true;
@@ -562,6 +620,7 @@ void QtWidgetsApplication1::onPlayClicked()
                .arg(claim_.cards.size()).arg(cardName(claim_.declaredRank)));
     showTableAction(QStringLiteral("你完成出牌：\n盖下 %1 张牌，并声明“%1 张 %2”。")
                         .arg(claim_.cards.size()).arg(cardName(claim_.declaredRank)));
+    showTableCards(claim_.cards, false);
     if (players_[Human].gamblingBan) {
         players_[Human].gamblingBan = false;
         addLog(QStringLiteral("你已完成下一次真实出牌，禁赌状态解除。"));
@@ -571,7 +630,9 @@ void QtWidgetsApplication1::onPlayClicked()
 
 void QtWidgetsApplication1::onBelieveClicked()
 {
-    if (phase_ != Phase::Decide || currentPlayer_ != Human || !claim_.valid)
+    if (phase_ != Phase::Decide || currentPlayer_ != Human || !claim_.valid
+        || claim_.cards.isEmpty()
+        || claim_.declarer < 0 || claim_.declarer >= players_.size())
         return;
 
     addLog(QStringLiteral("你选择相信 %1，中央牌池继续累积。").arg(players_[claim_.declarer].name));
@@ -634,8 +695,12 @@ void QtWidgetsApplication1::onRewardClicked()
             QStringLiteral("选择要侦查的牌型："), ranks, 0, false, &accepted);
         if (!accepted)
             return;
-        const int target = targetIndices[targets.indexOf(targetText)];
+        const int targetPosition = targets.indexOf(targetText);
         const int rank = ranks.indexOf(rankText);
+        if (targetPosition < 0 || targetPosition >= targetIndices.size()
+            || rank < 0 || rank > JokerRank)
+            return;
+        const int target = targetIndices[targetPosition];
         int count = 0;
         for (int card : players_[target].hand)
             if (card == rank)
@@ -655,6 +720,8 @@ void QtWidgetsApplication1::onRewardClicked()
         if (!accepted)
             return;
         const int rank = ranks.indexOf(rankText);
+        if (rank < 0 || rank > JokerRank)
+            return;
         int count = 0;
         for (int card : tablePile_)
             if (card == rank)
@@ -684,7 +751,17 @@ void QtWidgetsApplication1::onRewardClicked()
 
 void QtWidgetsApplication1::resolveChallenge(int challenger, bool allIn)
 {
+    if (!claim_.valid || claim_.cards.isEmpty()
+        || challenger < 0 || challenger >= players_.size()
+        || players_[challenger].finished
+        || claim_.declarer < 0 || claim_.declarer >= players_.size()
+        || challenger == claim_.declarer) {
+        addLog(QStringLiteral("质疑状态校验未通过，系统已阻止本次无效结算。"));
+        return;
+    }
+
     allInChallenger_ = allIn ? challenger : -1;
+    showTableCards(claim_.cards, true);
     setPhase(Phase::Waiting, QStringLiteral("揭牌判定中……"));
     updateUi();
 
@@ -714,6 +791,10 @@ void QtWidgetsApplication1::resolveChallenge(int challenger, bool allIn)
                             : QStringLiteral("质疑者成功识破谎言"))
                         .arg(players_[loser].name)
                         .arg(settledPileSize), true);
+    setPhase(Phase::Waiting, players_[Human].finished
+        ? QStringLiteral("【观战模式 · 揭牌结算结果】\n本次判定已完成，请查看中央提示；结果停留后再开始下一轮。")
+        : QStringLiteral("【揭牌结算结果】\n本次判定已完成，请查看中央提示；结果停留后再开始下一轮。"));
+    updateUi();
 
     checkChallengeTasks(challenger, truthful, settledPileSize);
     if (allIn)
@@ -734,9 +815,12 @@ void QtWidgetsApplication1::resolveChallenge(int challenger, bool allIn)
         return;
 
     const int expectedGame = gameId_;
-    const int settlementDelay = players_[Human].finished ? 1800 : 750;
+    const int settlementDelay = players_[Human].finished
+        ? AiSettlementSpectatorDisplayMs : AiSettlementDisplayMs;
+    startAiProgress(settlementDelay, QStringLiteral("揭牌与收牌结果展示中"));
     QTimer::singleShot(settlementDelay, this, [this, loser, expectedGame] {
-        if (expectedGame == gameId_)
+        if (expectedGame == gameId_ && phase_ == Phase::Waiting
+            && loser >= 0 && loser < players_.size())
             startNewRound(loser);
     });
 }
@@ -759,6 +843,7 @@ void QtWidgetsApplication1::confirmFinishedPlayer(int playerIndex)
     showTableAction(finishNotice, true);
     updateEventAfterRank();
     updateUi();
+    showRankPopup(playerIndex);
 }
 
 bool QtWidgetsApplication1::finishGameIfReady()
@@ -766,6 +851,7 @@ bool QtWidgetsApplication1::finishGameIfReady()
     if (finishOrder_.size() < players_.size() - 1)
         return false;
 
+    QString fourthPlaceName;
     if (finishOrder_.size() == players_.size() - 1) {
         for (int i = 0; i < players_.size(); ++i) {
             if (!players_[i].finished) {
@@ -774,6 +860,7 @@ bool QtWidgetsApplication1::finishGameIfReady()
                 finishOrder_.append(i);
                 addLog(QStringLiteral("%1 为最后一位未出完手牌的玩家，获得第 %2 名。")
                            .arg(players_[i].name).arg(players_[i].rank));
+                fourthPlaceName = players_[i].name;
                 break;
             }
         }
@@ -785,7 +872,11 @@ bool QtWidgetsApplication1::finishGameIfReady()
     addLog(QStringLiteral("最终排名：%1").arg(result));
     showTableAction(QStringLiteral("对局结束！\n最终排名：%1").arg(result), true);
     updateUi();
-    QMessageBox::information(this, QStringLiteral("游戏结束"), QStringLiteral("最终排名\n%1").arg(result));
+    const QString gameOverText = fourthPlaceName.isEmpty()
+        ? QStringLiteral("最终排名\n%1").arg(result)
+        : QStringLiteral("【新名次产生】\n%1 获得本局第 4 名。\n\n所有名次已经产生：\n%2")
+              .arg(fourthPlaceName, result);
+    QMessageBox::information(this, QStringLiteral("游戏结束"), gameOverText);
     return true;
 }
 
@@ -923,7 +1014,7 @@ int QtWidgetsApplication1::maximumPlayCount(int playerIndex) const
 int QtWidgetsApplication1::truthfulPlayCapacity(int playerIndex) const
 {
     int jokers = 0;
-    int counts[RankCount] = { 0, 0, 0, 0, 0, 0, 0 };
+    int counts[RankCount] = {};
     for (int card : players_[playerIndex].hand) {
         if (card == JokerRank)
             ++jokers;
@@ -938,9 +1029,12 @@ int QtWidgetsApplication1::truthfulPlayCapacity(int playerIndex) const
 
 bool QtWidgetsApplication1::challengeAllowed(int challenger) const
 {
-    if (!claim_.valid)
+    if (!claim_.valid || claim_.cards.isEmpty()
+        || claim_.declarer < 0 || claim_.declarer >= players_.size())
         return false;
-    if (challenger < 0 || challenger >= players_.size() || players_[challenger].gamblingBan)
+    if (challenger < 0 || challenger >= players_.size()
+        || challenger == claim_.declarer || players_[challenger].finished
+        || players_[challenger].gamblingBan)
         return false;
     if (currentEvent_ != TavernEvent::DrinkBeforeCatch)
         return true;
@@ -1080,7 +1174,9 @@ void QtWidgetsApplication1::expireRewardsForNewRound()
 void QtWidgetsApplication1::aiUseInformationReward(int playerIndex, int &suspicion)
 {
     Player &player = players_[playerIndex];
-    if (!claim_.valid || player.reward == SecretReward::None)
+    if (!claim_.valid || claim_.cards.isEmpty()
+        || claim_.declarer < 0 || claim_.declarer >= players_.size()
+        || player.reward == SecretReward::None)
         return;
 
     if (player.reward == SecretReward::PeekCard
@@ -1166,8 +1262,9 @@ void QtWidgetsApplication1::handleAllInResult(int challenger, bool success)
         bool accepted = false;
         const QString chosen = QInputDialog::getItem(this, QStringLiteral("梭哈成功"),
             QStringLiteral("选择一名玩家，秘密查看其当前全部手牌："), names, 0, false, &accepted);
-        if (accepted)
-            target = candidates[names.indexOf(chosen)];
+        const int chosenIndex = names.indexOf(chosen);
+        if (accepted && chosenIndex >= 0 && chosenIndex < candidates.size())
+            target = candidates[chosenIndex];
     }
 
     QVector<int> hand = players_[target].hand;
@@ -1184,6 +1281,65 @@ void QtWidgetsApplication1::handleAllInResult(int challenger, bool success)
     }
 }
 
+void QtWidgetsApplication1::showTableCards(const QVector<int> &cards, bool revealed)
+{
+    const int visibleCount = std::min(3, static_cast<int>(cards.size()));
+    if (claim_.valid && claim_.declarer >= 0 && claim_.declarer < players_.size()) {
+        ui.lastPlayPlayerLabel->setText(QStringLiteral("玩家%1出牌").arg(claim_.declarer + 1));
+        claimLabel_->setText(QStringLiteral("%1张%2")
+            .arg(claim_.cards.size()).arg(cardName(claim_.declaredRank)));
+        ui.lastPlayFrame->show();
+    }
+    for (int i = 0; i < 3; ++i) {
+        QLabel *cardLabel = tableCardLabels_[i];
+        if (!cardLabel)
+            continue;
+        if (i >= visibleCount) {
+            cardLabel->hide();
+            continue;
+        }
+
+        cardLabel->show();
+        if (revealed) {
+            const bool joker = cards[i] == JokerRank;
+            cardLabel->setText(joker
+                ? QStringLiteral("JOKER\n🐯")
+                : QStringLiteral("%1\n虎").arg(cardName(cards[i])));
+            cardLabel->setStyleSheet(joker
+                ? "background:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 #fff2ce,stop:1 #d9c092);"
+                  "border:4px solid #8a3d67;border-radius:9px;color:#7d174e;font-family:'Georgia';font-size:19px;font-weight:bold;"
+                : "background:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 #fff1cb,stop:1 #d5bd90);"
+                  "border:4px solid #6f5130;border-radius:9px;color:#21150d;font-family:'Georgia';font-size:25px;font-weight:bold;");
+        } else {
+            cardLabel->setText(QStringLiteral("虎\n牌"));
+            cardLabel->setStyleSheet(
+                "background:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 #263d55,stop:0.5 #10263b,stop:1 #07131f);"
+                "border:4px double #b78b48;border-radius:9px;color:#e5c47e;font-family:'STKaiti','KaiTi';font-size:19px;font-weight:bold;");
+        }
+    }
+
+    if (tableCardStatusLabel_) {
+        tableCardStatusLabel_->setText(revealed ? QStringLiteral("已揭牌") : QStringLiteral("暗牌"));
+        tableCardStatusLabel_->setStyleSheet(revealed
+            ? "color:#efb279;font-size:12px;font-weight:bold;background:transparent;border:none;"
+            : "color:#9e875f;font-size:12px;background:transparent;border:none;");
+    }
+}
+
+void QtWidgetsApplication1::clearTableCards()
+{
+    for (QLabel *cardLabel : tableCardLabels_) {
+        if (cardLabel)
+            cardLabel->hide();
+    }
+    if (tableCardStatusLabel_) {
+        tableCardStatusLabel_->setText(QString());
+        tableCardStatusLabel_->setStyleSheet(
+            "color:#9e875f;font-size:12px;background:transparent;border:none;");
+    }
+    ui.lastPlayFrame->hide();
+}
+
 void QtWidgetsApplication1::showTableAction(const QString &text, bool important)
 {
     tableActionText_ = text;
@@ -1191,15 +1347,62 @@ void QtWidgetsApplication1::showTableAction(const QString &text, bool important)
     if (!actionLabel_)
         return;
 
-    const bool spectatorMode = !players_.isEmpty() && players_[Human].finished
-        && phase_ != Phase::GameOver;
-    const QString heading = spectatorMode
-        ? QStringLiteral("【观战模式 · 你已获得第 %1 名】\n").arg(players_[Human].rank)
-        : QStringLiteral("【牌桌即时行动】\n");
-    actionLabel_->setText(heading + tableActionText_);
+    QString compactText = tableActionText_;
+    compactText.replace(QLatin1Char('\n'), QStringLiteral(" · "));
+    actionLabel_->setText(compactText);
     actionLabel_->setStyleSheet(tableActionImportant_
-        ? "background:#4a2027; border:3px solid #f59e6b; border-radius:12px; color:#fff1df; font-size:19px; font-weight:bold; padding:12px;"
-        : "background:#1d2d44; border:2px solid #5b8db8; border-radius:12px; color:#e8f4ff; font-size:18px; font-weight:bold; padding:12px;");
+        ? "background:transparent;border:none;color:#efb071;font-size:13px;font-weight:bold;padding:2px;"
+        : "background:transparent;border:none;color:#bda06d;font-size:13px;padding:2px;");
+}
+
+void QtWidgetsApplication1::startAiProgress(int durationMs, const QString &stageText)
+{
+    stopAiProgress();
+    if (!aiProgressBar_ || !aiProgressTimer_)
+        return;
+
+    aiProgressDurationMs_ = std::max(100, durationMs);
+    aiProgressElapsedMs_ = 0;
+    aiProgressStageText_ = stageText;
+    aiProgressBar_->setRange(0, aiProgressDurationMs_);
+    aiProgressBar_->setValue(0);
+    aiProgressBar_->setFormat(QStringLiteral("⏳ %1　剩余 %2 秒")
+        .arg(aiProgressStageText_)
+        .arg(aiProgressDurationMs_ / 1000.0, 0, 'f', 1));
+    aiProgressBar_->show();
+    aiProgressTimer_->start();
+}
+
+void QtWidgetsApplication1::stopAiProgress()
+{
+    if (aiProgressTimer_)
+        aiProgressTimer_->stop();
+    if (aiProgressBar_)
+        aiProgressBar_->hide();
+    aiProgressDurationMs_ = 0;
+    aiProgressElapsedMs_ = 0;
+    aiProgressStageText_.clear();
+}
+
+void QtWidgetsApplication1::showRankPopup(int playerIndex)
+{
+    if (playerIndex < 0 || playerIndex >= players_.size())
+        return;
+    const Player &player = players_[playerIndex];
+    if (player.rank <= 0)
+        return;
+
+    if (playerIndex == Human) {
+        QMessageBox::information(this, QStringLiteral("恭喜获得名次"),
+            QStringLiteral("恭喜！你已经出完全部手牌，获得本局第 %1 名。\n\n"
+                           "点击“确定”后将进入观战模式，继续查看电脑玩家的后续决策。")
+                .arg(player.rank));
+    } else {
+        QMessageBox::information(this, QStringLiteral("新名次产生"),
+            QStringLiteral("%1 已经出完全部手牌，获得本局第 %2 名！\n\n"
+                           "点击“确定”继续游戏。")
+                .arg(player.name).arg(player.rank));
+    }
 }
 
 void QtWidgetsApplication1::updateUi()
@@ -1207,65 +1410,149 @@ void QtWidgetsApplication1::updateUi()
     if (players_.isEmpty())
         return;
 
+    const bool validCurrentPlayer = currentPlayer_ >= 0 && currentPlayer_ < players_.size();
+    glowingPlayer_ = (!validCurrentPlayer || phase_ == Phase::GameOver
+        || players_[currentPlayer_].finished) ? -1 : currentPlayer_;
     for (int i = 1; i < players_.size(); ++i) {
         const Player &player = players_[i];
         const bool activeNow = currentPlayer_ == i && !player.finished && phase_ != Phase::GameOver;
-        opponentLabels_[i - 1]->setText(QStringLiteral("%1\n手牌：%2 张　状态：%3%4")
-            .arg(player.name).arg(player.hand.size()).arg(playerStatusText(player))
-            .arg(activeNow ? QStringLiteral("\n▶ 当前正在行动") : QString()));
+        opponentLabels_[i - 1]->setText(QStringLiteral("玩家%1").arg(i + 1));
+        playerCountLabels_[i]->setText(QString::number(player.hand.size()));
+        playerRankBadges_[i]->setText(QString::number(player.rank));
+        playerRankBadges_[i]->setVisible(player.rank > 0);
         if (player.finished) {
-            opponentLabels_[i - 1]->setStyleSheet(
-                "background:#20242b; border:1px solid #4b5563; border-radius:10px; padding:8px; color:#9ca3af;");
+            playerSeatFrames_[i]->setStyleSheet(
+                "background:rgba(11,10,8,205);border:1px solid #413a30;border-radius:13px;");
+            playerAvatarLabels_[i]->setStyleSheet(
+                "background:#26231f;border:3px solid #514a40;border-radius:34px;color:#777067;font-size:33px;");
+            opponentLabels_[i - 1]->setStyleSheet("color:#777067;font-size:15px;font-weight:bold;");
+            playerCountLabels_[i]->setStyleSheet("color:#766d60;font-family:'Georgia';font-size:27px;font-weight:bold;");
         } else if (activeNow) {
-            opponentLabels_[i - 1]->setStyleSheet(
-                "background:#4a321f; border:3px solid #f6c85f; border-radius:10px; padding:8px; color:#fff4cf; font-weight:bold;");
+            playerSeatFrames_[i]->setStyleSheet(
+                "background:rgba(67,38,13,230);border:2px solid #d3a246;border-radius:13px;");
+            playerAvatarLabels_[i]->setStyleSheet(
+                "background:qradialgradient(cx:.5,cy:.45,radius:.65,stop:0 #8b571f,stop:1 #281506);"
+                "border:5px double #f1bf57;border-radius:34px;color:#ffe7a7;font-size:33px;");
+            opponentLabels_[i - 1]->setStyleSheet("color:#ffe0a0;font-size:15px;font-weight:bold;");
+            playerCountLabels_[i]->setStyleSheet("color:#ffe09a;font-family:'Georgia';font-size:27px;font-weight:bold;");
         } else {
-            opponentLabels_[i - 1]->setStyleSheet(
-                "background:#252a34; border:1px solid #555; border-radius:10px; padding:8px;");
+            playerSeatFrames_[i]->setStyleSheet(
+                "background:rgba(10,7,4,218);border:1px solid rgba(118,83,40,170);border-radius:13px;");
+            playerAvatarLabels_[i]->setStyleSheet(
+                "background:qradialgradient(cx:.5,cy:.45,radius:.65,stop:0 #6e431c,stop:1 #201208);"
+                "border:3px solid #7f592b;border-radius:34px;color:#ffe1a0;font-size:33px;");
+            opponentLabels_[i - 1]->setStyleSheet("color:#f2dab0;font-size:15px;font-weight:bold;");
+            playerCountLabels_[i]->setStyleSheet("color:#f5cf82;font-family:'Georgia';font-size:27px;font-weight:bold;");
         }
     }
 
     const Player &human = players_[Human];
-    playerInfoLabel_->setText(QStringLiteral("你的手牌：%1 张　　状态：%2　　第 %3 轮")
-                                  .arg(human.hand.size()).arg(playerStatusText(human)).arg(roundNumber_));
+    playerInfoLabel_->setText(QStringLiteral("玩家1（你）"));
+    playerCountLabels_[Human]->setText(QString::number(human.hand.size()));
+    playerRankBadges_[Human]->setText(QString::number(human.rank));
+    playerRankBadges_[Human]->setVisible(human.rank > 0);
+    const bool humanActive = currentPlayer_ == Human && !human.finished && phase_ != Phase::GameOver;
+    if (human.finished) {
+        playerSeatFrames_[Human]->setStyleSheet(
+            "background:rgba(11,10,8,205);border:1px solid #413a30;border-radius:13px;");
+        playerAvatarLabels_[Human]->setStyleSheet(
+            "background:#26231f;border:3px solid #514a40;border-radius:34px;color:#777067;font-size:33px;");
+        playerInfoLabel_->setStyleSheet("color:#777067;font-size:15px;font-weight:bold;");
+        playerCountLabels_[Human]->setStyleSheet("color:#766d60;font-family:'Georgia';font-size:27px;font-weight:bold;");
+    } else if (humanActive) {
+        playerSeatFrames_[Human]->setStyleSheet(
+            "background:rgba(67,38,13,230);border:2px solid #d3a246;border-radius:13px;");
+        playerAvatarLabels_[Human]->setStyleSheet(
+            "background:qradialgradient(cx:.5,cy:.45,radius:.65,stop:0 #8b571f,stop:1 #281506);"
+            "border:5px double #f1bf57;border-radius:34px;color:#ffe7a7;font-size:33px;");
+        playerInfoLabel_->setStyleSheet("color:#ffe0a0;font-size:15px;font-weight:bold;");
+        playerCountLabels_[Human]->setStyleSheet("color:#ffe09a;font-family:'Georgia';font-size:27px;font-weight:bold;");
+    } else {
+        playerSeatFrames_[Human]->setStyleSheet(
+            "background:rgba(10,7,4,218);border:1px solid rgba(118,83,40,170);border-radius:13px;");
+        playerAvatarLabels_[Human]->setStyleSheet(
+            "background:qradialgradient(cx:.5,cy:.45,radius:.65,stop:0 #6e431c,stop:1 #201208);"
+            "border:3px solid #7f592b;border-radius:34px;color:#ffe1a0;font-size:33px;");
+        playerInfoLabel_->setStyleSheet("color:#f2dab0;font-size:15px;font-weight:bold;");
+        playerCountLabels_[Human]->setStyleSheet("color:#f5cf82;font-family:'Georgia';font-size:27px;font-weight:bold;");
+    }
     rankingLabel_->setText(finishOrder_.isEmpty()
         ? QStringLiteral("当前排名：尚未有人出完手牌")
         : QStringLiteral("当前排名：%1").arg(rankingSummary()));
 
     if (human.task == SecretTask::None) {
-        taskLabel_->setText(QStringLiteral("【你的秘密任务】本局已完成 2/2，不再获得新任务。"));
+        taskLabel_->setText(QStringLiteral("任务已全部完成"));
     } else {
-        taskLabel_->setText(QStringLiteral("【你的秘密任务：%1】（已完成 %2/2）\n%3")
-                                .arg(taskName(human.task)).arg(human.completedTasks)
-                                .arg(taskDescription(human.task)));
+        taskLabel_->setText(QStringLiteral("任务：%1\n%2")
+            .arg(taskName(human.task), taskDescription(human.task)));
     }
     if (human.reward == SecretReward::None) {
-        rewardLabel_->setText(QStringLiteral("【你的秘密奖励】暂无奖励"));
+        rewardLabel_->setText(QStringLiteral("暂无奖励"));
         rewardButton_->setText(QStringLiteral("使用秘密奖励"));
     } else {
         QString pendingText;
         if (human.pendingRewards > 0)
             pendingText = QStringLiteral("　另有 %1 份待领取").arg(human.pendingRewards);
-        rewardLabel_->setText(QStringLiteral("【你的秘密奖励：%1】有效至第 %2 轮结束%3\n%4")
+        rewardLabel_->setText(QStringLiteral("奖励：%1%2\n%3")
                                   .arg(rewardName(human.reward))
-                                  .arg(human.rewardAwardRound + 1)
                                   .arg(pendingText)
                                   .arg(rewardDescription(human.reward)));
         rewardButton_->setText(QStringLiteral("使用：%1").arg(rewardName(human.reward)));
     }
 
-    eventLabel_->setText(currentEvent_ == TavernEvent::None
-        ? QStringLiteral("当前无酒馆事件 · 基础规则：每次出 1–%1 张牌").arg(MaxPlayCards)
-        : QStringLiteral("【酒馆事件：%1】%2").arg(eventName(currentEvent_), eventDescription(currentEvent_)));
+    const bool showingReward = human.reward != SecretReward::None;
+    ui.privateInfoTitle->setText(showingReward ? QStringLiteral("🎁  奖励") : QStringLiteral("📜  任务"));
+    taskLabel_->setVisible(!showingReward);
+    rewardLabel_->setVisible(showingReward);
+    rewardButton_->setVisible(showingReward);
 
-    if (claim_.valid) {
-        claimLabel_->setText(QStringLiteral("中央牌池：%1 张\n%2 的声明：“这里有 %3 张 %4”")
-                                 .arg(tablePile_.size())
-                                 .arg(players_[claim_.declarer].name)
-                                 .arg(claim_.cards.size())
-                                 .arg(cardName(claim_.declaredRank)));
+    QString eventEffect;
+    switch (currentEvent_) {
+    case TavernEvent::BartenderRush:
+        eventEffect = QStringLiteral("本轮每次必须出3张");
+        break;
+    case TavernEvent::DrinkBeforeCatch:
+        eventEffect = QStringLiteral("牌堆不足%1张时不可质疑").arg(DrinkChallengePile);
+        break;
+    case TavernEvent::FinalTable:
+        eventEffect = QStringLiteral("每次至少出2张");
+        break;
+    case TavernEvent::ClosingTime:
+        eventEffect = QStringLiteral("每次至少出2张");
+        break;
+    case TavernEvent::None:
+        break;
+    }
+    const int eventCode = static_cast<int>(currentEvent_);
+    if (currentEvent_ == TavernEvent::None) {
+        ui.eventBannerFrame->hide();
+        ui.eventStatusLabel->hide();
+        presentedEventCode_ = -1;
     } else {
-        claimLabel_->setText(QStringLiteral("中央牌池：%1 张\n桌面目前没有待判断的声明").arg(tablePile_.size()));
+        const QString eventTitle = eventName(currentEvent_);
+        eventLabel_->setText(QStringLiteral("🍺  酒馆事件 · %1    %2").arg(eventTitle, eventEffect));
+        ui.eventStatusLabel->setText(QStringLiteral("%1 · %2").arg(eventTitle, eventEffect));
+        if (presentedEventCode_ != eventCode) {
+            presentedEventCode_ = eventCode;
+            ui.eventStatusLabel->hide();
+            ui.eventBannerFrame->show();
+            QTimer::singleShot(1800, this, [this, eventCode] {
+                if (static_cast<int>(currentEvent_) == eventCode) {
+                    ui.eventBannerFrame->hide();
+                    ui.eventStatusLabel->show();
+                }
+            });
+        } else if (!ui.eventBannerFrame->isVisible()) {
+            ui.eventStatusLabel->show();
+        }
+    }
+
+    ui.pileCountLabel->setText(QStringLiteral("%1张").arg(tablePile_.size()));
+    if (claim_.valid) {
+        ui.lastPlayPlayerLabel->setText(QStringLiteral("玩家%1出牌").arg(claim_.declarer + 1));
+        claimLabel_->setText(QStringLiteral("%1张%2")
+            .arg(claim_.cards.size()).arg(cardName(claim_.declaredRank)));
+        ui.lastPlayFrame->show();
     }
 
     const bool humanTurn = currentPlayer_ == Human && !human.finished;
@@ -1274,6 +1561,14 @@ void QtWidgetsApplication1::updateUi()
     rewardButton_->setEnabled(rewardUsable(Human));
     playButton_->setEnabled(humanTurn && phase_ == Phase::Play && !human.hand.isEmpty());
     rankCombo_->setEnabled(humanTurn && phase_ == Phase::Play && !human.hand.isEmpty());
+    const bool declaring = humanTurn && phase_ == Phase::Play && !human.hand.isEmpty();
+    const bool deciding = humanTurn && phase_ == Phase::Decide;
+    ui.rankPromptLabel->setVisible(declaring);
+    rankCombo_->setVisible(declaring);
+    playButton_->setVisible(declaring);
+    believeButton_->setVisible(deciding);
+    challengeButton_->setVisible(deciding);
+    restartButton_->setVisible(phase_ == Phase::GameOver);
     rebuildHandButtons();
 }
 
@@ -1289,14 +1584,22 @@ void QtWidgetsApplication1::rebuildHandButtons()
         selected_.fill(false, players_[Human].hand.size());
 
     for (int i = 0; i < players_[Human].hand.size(); ++i) {
-        auto *button = new QPushButton(cardName(players_[Human].hand[i]));
+        const int card = players_[Human].hand[i];
+        auto *button = new QPushButton(card == JokerRank
+            ? QStringLiteral("JOKER\n🐯")
+            : QStringLiteral("%1\n虎").arg(cardName(card)));
         button->setCheckable(true);
         button->setChecked(selected_[i]);
         button->setEnabled(currentPlayer_ == Human && phase_ == Phase::Play && !players_[Human].finished);
-        button->setMinimumSize(72, 76);
-        button->setStyleSheet("QPushButton{font-size:22px;background:#e8dcc4;color:#201a16;border:3px solid #8b7355;border-radius:9px;}"
-                              "QPushButton:checked{background:#f6c85f;border-color:#fff;}"
-                              "QPushButton:disabled{background:#8f8778;color:#4b463f;}");
+        button->setMinimumSize(62, 112);
+        button->setMaximumWidth(76);
+        button->setStyleSheet(
+            "QPushButton{font-family:'Georgia','Microsoft YaHei UI';font-size:21px;font-weight:bold;"
+            "background:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 #f8e8bd,stop:.72 #ddc69a,stop:1 #b99c6e);"
+            "color:#25170d;border:3px solid #62482f;border-radius:8px;padding:6px 3px;}"
+            "QPushButton:hover{background:#fff0c7;border-color:#d2a34d;padding-bottom:10px;}"
+            "QPushButton:checked{background:#e8ba5e;border:4px solid #ffe09a;padding-bottom:12px;}"
+            "QPushButton:disabled{background:#756b5b;color:#3e382f;border-color:#514738;}");
         connect(button, &QPushButton::toggled, this, [this, i](bool checked) {
             if (checked) {
                 int count = 0;
@@ -1311,15 +1614,36 @@ void QtWidgetsApplication1::rebuildHandButtons()
             }
             selected_[i] = checked;
         });
-        // 超出每行显示张数后自动换到下一行，避免收牌后手牌过多时溢出界面
         handLayout_->addWidget(button, i / HandColumns, i % HandColumns);
     }
 }
 
 void QtWidgetsApplication1::setPhase(Phase phase, const QString &text)
 {
+    stopAiProgress();
     phase_ = phase;
     phaseLabel_->setText(text);
+    if (text.contains(QStringLiteral("电脑决策阶段"))) {
+        decisionActionPanel_->setStyleSheet(
+            "QFrame#decisionActionPanel{background:rgba(61,35,12,215);border:2px solid #c8963d;border-radius:9px;}");
+        phaseLabel_->setStyleSheet(
+            "background:transparent;border:none;font-size:15px;font-weight:bold;color:#ffe0a0;padding:3px;");
+    } else if (text.contains(QStringLiteral("电脑决策结果"))) {
+        decisionActionPanel_->setStyleSheet(
+            "QFrame#decisionActionPanel{background:rgba(28,55,37,215);border:2px solid #6f9865;border-radius:9px;}");
+        phaseLabel_->setStyleSheet(
+            "background:transparent;border:none;font-size:15px;font-weight:bold;color:#dce9c8;padding:3px;");
+    } else if (text.contains(QStringLiteral("揭牌"))) {
+        decisionActionPanel_->setStyleSheet(
+            "QFrame#decisionActionPanel{background:rgba(67,28,18,220);border:2px solid #c86f45;border-radius:9px;}");
+        phaseLabel_->setStyleSheet(
+            "background:transparent;border:none;font-size:15px;font-weight:bold;color:#f3c59f;padding:3px;");
+    } else {
+        decisionActionPanel_->setStyleSheet(
+            "QFrame#decisionActionPanel{background:rgba(10,6,3,180);border:1px solid rgba(143,99,45,155);border-radius:9px;}");
+        phaseLabel_->setStyleSheet(
+            "background:transparent;border:none;font-size:15px;font-weight:bold;color:#f1d49a;padding:3px;");
+    }
 }
 
 void QtWidgetsApplication1::addLog(const QString &text)
@@ -1353,11 +1677,42 @@ bool QtWidgetsApplication1::cardsMatchClaim(const QVector<int> &cards, int decla
     return true;
 }
 
+bool QtWidgetsApplication1::isLegalPlaySelection(
+    int playerIndex, const QVector<int> &indices, int declaredRank) const
+{
+    if (playerIndex < 0 || playerIndex >= players_.size()
+        || players_[playerIndex].finished
+        || declaredRank < 0 || declaredRank >= RankCount
+        || indices.isEmpty()) {
+        return false;
+    }
+
+    const Player &player = players_[playerIndex];
+    const int minimum = minimumPlayCount(playerIndex);
+    const int maximum = maximumPlayCount(playerIndex);
+    if (indices.size() < minimum || indices.size() > maximum)
+        return false;
+
+    QVector<bool> seen;
+    seen.fill(false, player.hand.size());
+    QVector<int> cards;
+    cards.reserve(indices.size());
+    for (int index : indices) {
+        if (index < 0 || index >= player.hand.size() || seen[index])
+            return false;
+        seen[index] = true;
+        cards.append(player.hand[index]);
+    }
+
+    return !player.gamblingBan || cardsMatchClaim(cards, declaredRank);
+}
+
 QString QtWidgetsApplication1::cardName(int rank) const
 {
     static const QString names[] = {
-        QStringLiteral("8"), QStringLiteral("9"), QStringLiteral("10"), QStringLiteral("J"),
-        QStringLiteral("Q"), QStringLiteral("K"), QStringLiteral("A"), QStringLiteral("Joker")
+        QStringLiteral("8"), QStringLiteral("9"), QStringLiteral("10"),
+        QStringLiteral("J"), QStringLiteral("Q"), QStringLiteral("K"),
+        QStringLiteral("A"), QStringLiteral("Joker")
     };
     return (rank >= 0 && rank <= JokerRank) ? names[rank] : QStringLiteral("?");
 }
@@ -1399,15 +1754,16 @@ QString QtWidgetsApplication1::eventDescription(TavernEvent event) const
 {
     switch (event) {
     case TavernEvent::BartenderRush:
-        return QStringLiteral("本轮每次必须打出 %1 张；不足 %1 张时打出全部剩余手牌。")
-            .arg(MaxPlayCards).arg(MaxPlayCards);
+        return QStringLiteral("触发：最近 %1 次出牌中有至少 %2 次不超过 %3 张。本轮每次必须打出 %4 张；手牌不足时全部打出。")
+            .arg(ConservativePlayWindow).arg(ConservativePlayNeed)
+            .arg(ConservativePlayMaxCards).arg(MaxPlayCards);
     case TavernEvent::DrinkBeforeCatch:
-        return QStringLiteral("中央牌池达到 %1 张前禁止质疑；上一名玩家打出最后一手时例外。")
-            .arg(DrinkChallengePile);
+        return QStringLiteral("触发：连续 %1 轮的结算牌堆都不超过 %2 张。中央牌池达到 %3 张前禁止质疑；上家打出最后一手时例外。")
+            .arg(SmallPileRounds).arg(SmallPileMax).arg(DrinkChallengePile);
     case TavernEvent::FinalTable:
         return QStringLiteral("剩余两人每次至少打出 2 张；仅剩 1 张时可正常打出。");
     case TavernEvent::ClosingTime:
-        return QStringLiteral("连续 %1 次有效出牌未产生新名次时触发；每次至少打出 2 张，产生下一名次后结束。")
+        return QStringLiteral("触发：连续 %1 次合法出牌没有产生新名次。直到产生下一名次前，每次至少打出 2 张；仅剩 1 张时可正常打出。")
             .arg(ClosingTimePlays);
     case TavernEvent::None:
         return QStringLiteral("按基础规则每次出 1–%1 张牌。").arg(MaxPlayCards);

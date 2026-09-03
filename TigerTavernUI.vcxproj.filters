@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{C7C5C4A2-6688-4DB6-BD2B-C667DFEF9070}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4B04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx</Extensions>
+    </Filter>
+    <Filter Include="Project Files">
+      <UniqueIdentifier>{A3F42959-0E8A-43AA-A943-C2F96A7E7608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{8A5116F8-6F53-4D57-A238-CB92C3448B19}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{197765C3-90E6-49EF-9220-6DA305644B9C}</UniqueIdentifier>
+      <Extensions>qrc;svg;png;jpg</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QtWidgetsApplication1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="QtWidgetsApplication1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="QtWidgetsApplication1.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="LiarsTavern.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\tavern_table_background.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="使用说明.txt">
+      <Filter>Project Files</Filter>
+    </None>
+    <None Include="整合修改说明.txt">
+      <Filter>Project Files</Filter>
+    </None>
+    <None Include="UI编辑说明.txt">
+      <Filter>Project Files</Filter>
+    </None>
+    <None Include="版本文件改动清单.txt">
+      <Filter>Project Files</Filter>
+    </None>
+    <None Include="PDF要求落实说明.txt">
+      <Filter>Project Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

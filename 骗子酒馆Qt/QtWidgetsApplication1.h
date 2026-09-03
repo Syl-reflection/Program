@@ -3,12 +3,18 @@
 #include <QMainWindow>
 #include <QString>
 #include <QVector>
+#include "ui_QtWidgetsApplication1.h"
 
 class QComboBox;
+class QFrame;
+class QGraphicsDropShadowEffect;
 class QGridLayout;
 class QLabel;
+class QProgressBar;
 class QPushButton;
 class QTextEdit;
+class QTimer;
+class QVariantAnimation;
 
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -17,6 +23,8 @@ public:
     ~QtWidgetsApplication1() override = default;
 
 private:
+    Ui::QtWidgetsApplication1Class ui;
+
     enum class Phase { Waiting, Decide, Play, GameOver };
     enum class TavernEvent { None, BartenderRush, DrinkBeforeCatch, FinalTable, ClosingTime };
     enum class SecretTask { None, DeceiveAtRisk, BaitChallenge, BoldChallenge, DesperateBluff };
@@ -61,7 +69,10 @@ private:
     bool pendingDrinkBeforeCatch_ = false;
     bool tableActionImportant_ = false;
     QString tableActionText_;
+    QString aiProgressStageText_;
     QVector<bool> selected_;
+    int aiProgressDurationMs_ = 0;
+    int aiProgressElapsedMs_ = 0;
 
     QLabel *titleLabel_ = nullptr;
     QLabel *phaseLabel_ = nullptr;
@@ -73,6 +84,15 @@ private:
     QLabel *rewardLabel_ = nullptr;
     QLabel *claimLabel_ = nullptr;
     QLabel *rankingLabel_ = nullptr;
+    QLabel *tableCardLabels_[3] = { nullptr, nullptr, nullptr };
+    QLabel *tableCardStatusLabel_ = nullptr;
+    QFrame *playerSeatFrames_[4] = { nullptr, nullptr, nullptr, nullptr };
+    QLabel *playerAvatarLabels_[4] = { nullptr, nullptr, nullptr, nullptr };
+    QLabel *playerCountLabels_[4] = { nullptr, nullptr, nullptr, nullptr };
+    QLabel *playerRankBadges_[4] = { nullptr, nullptr, nullptr, nullptr };
+    QGraphicsDropShadowEffect *playerGlowEffects_[4] = { nullptr, nullptr, nullptr, nullptr };
+    QFrame *decisionActionPanel_ = nullptr;
+    QProgressBar *aiProgressBar_ = nullptr;
     QGridLayout *handLayout_ = nullptr;
     QComboBox *rankCombo_ = nullptr;
     QPushButton *playButton_ = nullptr;
@@ -81,6 +101,10 @@ private:
     QPushButton *rewardButton_ = nullptr;
     QPushButton *restartButton_ = nullptr;
     QTextEdit *logEdit_ = nullptr;
+    QTimer *aiProgressTimer_ = nullptr;
+    QVariantAnimation *turnGlowAnimation_ = nullptr;
+    int glowingPlayer_ = -1;
+    int presentedEventCode_ = -1;
 
     void buildUi();
     void startGame();
@@ -122,12 +146,18 @@ private:
 
     void updateUi();
     void rebuildHandButtons();
+    void showTableCards(const QVector<int> &cards, bool revealed);
+    void clearTableCards();
     void showTableAction(const QString &text, bool important = false);
+    void startAiProgress(int durationMs, const QString &stageText);
+    void stopAiProgress();
+    void showRankPopup(int playerIndex);
     void setPhase(Phase phase, const QString &text);
     void addLog(const QString &text);
     int nextActive(int from) const;
     bool claimIsTrue() const;
     bool cardsMatchClaim(const QVector<int> &cards, int declaredRank) const;
+    bool isLegalPlaySelection(int playerIndex, const QVector<int> &indices, int declaredRank) const;
     QString cardName(int rank) const;
     QString playerStatusText(const Player &player) const;
     QString rankingSummary() const;

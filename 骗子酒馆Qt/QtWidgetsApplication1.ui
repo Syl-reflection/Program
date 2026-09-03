@@ -2,15 +2,30 @@
 <ui version="4.0">
  <class>QtWidgetsApplication1Class</class>
  <widget class="QMainWindow" name="QtWidgetsApplication1Class">
-  <property name="geometry"><rect><x>0</x><y>0</y><width>1600</width><height>900</height></rect></property>
-  <property name="minimumSize"><size><width>1280</width><height>720</height></size></property>
-  <property name="windowTitle"><string>虎牌·暖光酒馆牌桌 UI 专项优化版</string></property>
-  <property name="styleSheet"><string notr="true">QMainWindow{background:#080503;}
-QWidget#centralWidget{color:#f1dbad;font-family:"Microsoft YaHei UI";border-image:url(:/ui/tavern_table_background.svg) 0 0 0 0 stretch stretch;}
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1600</width>
+    <height>900</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1280</width>
+    <height>720</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>虎牌·暖光酒馆牌桌 UI 专项优化版</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow{background:#080503;}
+QWidget#centralWidget{color:#f1dbad;font-family:&quot;Microsoft YaHei UI&quot;;border-image:url(:/ui/tavern_table_background.svg) 0 0 0 0 stretch stretch;}
 QLabel{background:transparent;color:#f1dbad;}
 QFrame#topBarFrame{background:rgba(5,3,2,205);border:none;border-bottom:1px solid rgba(156,106,47,145);}
 QLabel#roomLabel{color:#b89052;font-size:13px;}
-QLabel#titleLabel{color:#e8bd6a;font-family:"STKaiti","KaiTi","Microsoft YaHei UI";font-size:31px;font-weight:800;}
+QLabel#titleLabel{color:#e8bd6a;font-family:&quot;STKaiti&quot;,&quot;KaiTi&quot;,&quot;Microsoft YaHei UI&quot;;font-size:31px;font-weight:800;}
 QLabel#eventStatusLabel{background:rgba(24,14,7,220);border:1px solid #7f5b2c;border-radius:6px;color:#d8b36e;padding:2px 12px;font-size:12px;}
 QPushButton#rulesButton{background:rgba(30,18,9,220);border:1px solid #8c642f;border-radius:18px;color:#d9b773;font-size:17px;padding:4px;}
 QFrame#tableSurfaceFrame{background:qradialgradient(cx:0.48,cy:0.47,radius:0.74,fx:0.48,fy:0.43,stop:0 rgba(131,75,31,230),stop:0.54 rgba(78,41,17,234),stop:0.83 rgba(42,21,9,242),stop:1 rgba(12,7,4,248));border:4px solid #7f5124;border-radius:255px;}
@@ -18,18 +33,18 @@ QFrame#humanPanel,QFrame#opponentSeat1,QFrame#opponentSeat2,QFrame#opponentSeat3
 QLabel#humanAvatarLabel,QLabel#opponentAvatar1,QLabel#opponentAvatar2,QLabel#opponentAvatar3{background:qradialgradient(cx:.5,cy:.45,radius:.65,stop:0 #6e431c,stop:1 #201208);border:3px solid #7f592b;border-radius:34px;color:#ffe1a0;font-size:33px;}
 QLabel#playerInfoLabel,QLabel#opponentLabel1,QLabel#opponentLabel2,QLabel#opponentLabel3{color:#f2dab0;font-size:15px;font-weight:bold;}
 QLabel#humanCardsLabel,QLabel#opponentCards1,QLabel#opponentCards2,QLabel#opponentCards3{color:#9eb0b7;font-size:25px;letter-spacing:-6px;}
-QLabel#humanCountLabel,QLabel#opponentCount1,QLabel#opponentCount2,QLabel#opponentCount3{color:#f5cf82;font-family:"Georgia";font-size:27px;font-weight:bold;}
+QLabel#humanCountLabel,QLabel#opponentCount1,QLabel#opponentCount2,QLabel#opponentCount3{color:#f5cf82;font-family:&quot;Georgia&quot;;font-size:27px;font-weight:bold;}
 QLabel#humanRankBadge,QLabel#opponentRankBadge1,QLabel#opponentRankBadge2,QLabel#opponentRankBadge3{background:#261506;border:2px solid #e0ad4f;border-radius:15px;color:#ffe19a;font-size:17px;font-weight:bold;}
 QFrame#centerPlayFrame{background:rgba(14,8,4,92);border:none;border-radius:26px;}
 QFrame#lastPlayFrame{background:rgba(18,10,5,165);border:1px solid rgba(167,112,46,130);border-radius:12px;}
 QLabel#lastPlayPlayerLabel{color:#c9a568;font-size:15px;}
-QLabel#claimLabel{color:#ffe1a0;font-family:"Georgia","Microsoft YaHei UI";font-size:31px;font-weight:bold;}
+QLabel#claimLabel{color:#ffe1a0;font-family:&quot;Georgia&quot;,&quot;Microsoft YaHei UI&quot;;font-size:31px;font-weight:bold;}
 QFrame#cardStageFrame{background:transparent;border:none;}
-QLabel#tableCard1,QLabel#tableCard2,QLabel#tableCard3{background:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 #263d55,stop:.5 #10263b,stop:1 #07131f);border:4px double #b78b48;border-radius:9px;color:#e5c47e;font-family:"STKaiti","KaiTi";font-size:20px;font-weight:bold;}
+QLabel#tableCard1,QLabel#tableCard2,QLabel#tableCard3{background:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 #263d55,stop:.5 #10263b,stop:1 #07131f);border:4px double #b78b48;border-radius:9px;color:#e5c47e;font-family:&quot;STKaiti&quot;,&quot;KaiTi&quot;;font-size:20px;font-weight:bold;}
 QLabel#tableCardStatusLabel{color:#ae8e57;font-size:12px;}
 QFrame#pileFrame{background:rgba(11,7,4,150);border:none;border-radius:10px;}
 QLabel#pileStackLabel{color:#9cadb3;font-size:32px;letter-spacing:-12px;}
-QLabel#pileCountLabel{color:#f4cc7a;font-family:"Georgia","Microsoft YaHei UI";font-size:22px;font-weight:bold;}
+QLabel#pileCountLabel{color:#f4cc7a;font-family:&quot;Georgia&quot;,&quot;Microsoft YaHei UI&quot;;font-size:22px;font-weight:bold;}
 QFrame#decisionActionPanel{background:rgba(10,6,3,180);border:1px solid rgba(143,99,45,155);border-radius:9px;}
 QLabel#phaseLabel{color:#f1d49a;font-size:15px;font-weight:bold;}
 QLabel#actionLabel{color:#bfa16b;font-size:13px;}
@@ -51,40 +66,1327 @@ QScrollArea#handScrollArea,QWidget#handContainer{background:transparent;border:n
 QFrame#privateInfoFrame{background:rgba(17,10,5,232);border:1px solid #765225;border-radius:9px;}
 QLabel#privateInfoTitle{color:#e6bd72;font-size:15px;font-weight:bold;}
 QLabel#taskLabel,QLabel#rewardLabel{color:#d9c49a;font-size:12px;}
-QPushButton#rewardButton,QPushButton#restartButton{background:rgba(72,39,14,235);border:1px solid #a87531;font-size:13px;}</string></property>
+QPushButton#rewardButton,QPushButton#restartButton{background:rgba(72,39,14,235);border:1px solid #a87531;font-size:13px;}</string>
+  </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="rootLayout" stretch="0,1,0">
-    <property name="leftMargin"><number>9</number></property><property name="topMargin"><number>5</number></property><property name="rightMargin"><number>9</number></property><property name="bottomMargin"><number>7</number></property><property name="spacing"><number>5</number></property>
-    <item><widget class="QFrame" name="topBarFrame"><layout class="QVBoxLayout" name="topBarOuterLayout"><property name="leftMargin"><number>8</number></property><property name="topMargin"><number>2</number></property><property name="rightMargin"><number>8</number></property><property name="bottomMargin"><number>3</number></property><property name="spacing"><number>1</number></property>
-     <item><layout class="QHBoxLayout" name="topBarLayout" stretch="1,4,1"><item><widget class="QLabel" name="roomLabel"><property name="text"><string>房间号：114514</string></property></widget></item><item><widget class="QLabel" name="titleLabel"><property name="text"><string>──  虎 牌  ──</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><layout class="QHBoxLayout" name="topRightLayout"><item><spacer name="topRightSpacer"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item><item><widget class="QPushButton" name="rulesButton"><property name="minimumSize"><size><width>38</width><height>38</height></size></property><property name="maximumSize"><size><width>38</width><height>38</height></size></property><property name="toolTip"><string>规则说明</string></property><property name="text"><string>⚙</string></property></widget></item></layout></item></layout></item>
-     <item alignment="Qt::AlignHCenter"><widget class="QLabel" name="eventStatusLabel"><property name="visible"><bool>false</bool></property><property name="maximumSize"><size><width>520</width><height>22</height></size></property><property name="text"><string>酒馆事件</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item>
-    </layout></widget></item>
-    <item><widget class="QFrame" name="tableSurfaceFrame"><property name="minimumSize"><size><width>0</width><height>455</height></size></property><layout class="QGridLayout" name="tableGridLayout" rowstretch="0,1,1,0" columnstretch="0,1,0">
-     <property name="leftMargin"><number>22</number></property><property name="topMargin"><number>10</number></property><property name="rightMargin"><number>22</number></property><property name="bottomMargin"><number>10</number></property><property name="horizontalSpacing"><number>14</number></property><property name="verticalSpacing"><number>7</number></property>
-     <item row="0" column="1"><widget class="QFrame" name="opponentSeat1"><property name="minimumSize"><size><width>230</width><height>76</height></size></property><property name="maximumSize"><size><width>310</width><height>86</height></size></property><layout class="QHBoxLayout" name="opponentSeatLayout1"><property name="leftMargin"><number>7</number></property><property name="topMargin"><number>5</number></property><property name="rightMargin"><number>7</number></property><property name="bottomMargin"><number>5</number></property>
-      <item><widget class="QLabel" name="opponentAvatar1"><property name="minimumSize"><size><width>68</width><height>68</height></size></property><property name="maximumSize"><size><width>68</width><height>68</height></size></property><property name="text"><string>🐯</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><layout class="QVBoxLayout" name="opponentInfoLayout1"><item><layout class="QHBoxLayout" name="opponentNameLayout1"><item><widget class="QLabel" name="opponentLabel1"><property name="text"><string>玩家2</string></property></widget></item><item><widget class="QLabel" name="opponentRankBadge1"><property name="visible"><bool>false</bool></property><property name="minimumSize"><size><width>31</width><height>31</height></size></property><property name="maximumSize"><size><width>31</width><height>31</height></size></property><property name="text"><string>1</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></item><item><layout class="QHBoxLayout" name="opponentCardsRow1"><item><widget class="QLabel" name="opponentCards1"><property name="text"><string>▥▥▥▥▥</string></property></widget></item><item><widget class="QLabel" name="opponentCount1"><property name="text"><string>11</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></item></layout></item>
-     </layout></widget></item>
-     <item row="1" column="0" rowspan="2"><widget class="QFrame" name="humanPanel"><property name="minimumSize"><size><width>190</width><height>155</height></size></property><property name="maximumSize"><size><width>225</width><height>190</height></size></property><layout class="QVBoxLayout" name="humanPanelLayout"><property name="leftMargin"><number>8</number></property><property name="topMargin"><number>7</number></property><property name="rightMargin"><number>8</number></property><property name="bottomMargin"><number>7</number></property>
-      <item><layout class="QHBoxLayout" name="humanTopLayout"><item><widget class="QLabel" name="humanAvatarLabel"><property name="minimumSize"><size><width>70</width><height>70</height></size></property><property name="maximumSize"><size><width>70</width><height>70</height></size></property><property name="text"><string>🐯</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><widget class="QLabel" name="humanRankBadge"><property name="visible"><bool>false</bool></property><property name="minimumSize"><size><width>31</width><height>31</height></size></property><property name="maximumSize"><size><width>31</width><height>31</height></size></property><property name="text"><string>1</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></item><item><widget class="QLabel" name="playerInfoLabel"><property name="text"><string>玩家1（你）</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><layout class="QHBoxLayout" name="humanCardsRow"><item><widget class="QLabel" name="humanCardsLabel"><property name="text"><string>▥▥▥▥▥</string></property></widget></item><item><widget class="QLabel" name="humanCountLabel"><property name="text"><string>11</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></item>
-     </layout></widget></item>
-     <item row="1" column="1" rowspan="2"><widget class="QFrame" name="centerPlayFrame"><property name="minimumSize"><size><width>470</width><height>275</height></size></property><layout class="QVBoxLayout" name="centerPlayLayout" stretch="0,0,1,0,0"><property name="leftMargin"><number>12</number></property><property name="topMargin"><number>6</number></property><property name="rightMargin"><number>12</number></property><property name="bottomMargin"><number>6</number></property><property name="spacing"><number>4</number></property>
-      <item><widget class="QFrame" name="eventBannerFrame"><property name="visible"><bool>false</bool></property><property name="maximumSize"><size><width>560</width><height>46</height></size></property><layout class="QHBoxLayout" name="eventBannerLayout"><property name="leftMargin"><number>10</number></property><property name="topMargin"><number>3</number></property><property name="rightMargin"><number>10</number></property><property name="bottomMargin"><number>3</number></property><item><widget class="QLabel" name="eventLabel"><property name="text"><string>🍺  酒馆事件</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></widget></item>
-      <item><widget class="QFrame" name="lastPlayFrame"><property name="visible"><bool>false</bool></property><property name="maximumSize"><size><width>430</width><height>82</height></size></property><layout class="QVBoxLayout" name="lastPlayLayout"><property name="leftMargin"><number>7</number></property><property name="topMargin"><number>4</number></property><property name="rightMargin"><number>7</number></property><property name="bottomMargin"><number>4</number></property><property name="spacing"><number>0</number></property><item><widget class="QLabel" name="lastPlayPlayerLabel"><property name="text"><string>玩家2出牌</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><widget class="QLabel" name="claimLabel"><property name="text"><string>2张K</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></widget></item>
-      <item><widget class="QFrame" name="cardStageFrame"><property name="minimumSize"><size><width>0</width><height>112</height></size></property><layout class="QVBoxLayout" name="cardStageLayout"><property name="leftMargin"><number>6</number></property><property name="topMargin"><number>2</number></property><property name="rightMargin"><number>6</number></property><property name="bottomMargin"><number>2</number></property><property name="spacing"><number>1</number></property><item><layout class="QHBoxLayout" name="tableCardsLayout"><item><spacer name="tableCardLeftSpacer"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>30</width><height>20</height></size></property></spacer></item><item><widget class="QLabel" name="tableCard1"><property name="minimumSize"><size><width>66</width><height>92</height></size></property><property name="maximumSize"><size><width>72</width><height>98</height></size></property><property name="text"><string>虎&#10;牌</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><widget class="QLabel" name="tableCard2"><property name="minimumSize"><size><width>66</width><height>92</height></size></property><property name="maximumSize"><size><width>72</width><height>98</height></size></property><property name="text"><string>虎&#10;牌</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><widget class="QLabel" name="tableCard3"><property name="minimumSize"><size><width>66</width><height>92</height></size></property><property name="maximumSize"><size><width>72</width><height>98</height></size></property><property name="text"><string>虎&#10;牌</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><spacer name="tableCardRightSpacer"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>30</width><height>20</height></size></property></spacer></item></layout></item><item><widget class="QLabel" name="tableCardStatusLabel"><property name="text"><string>暗牌</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></widget></item>
-      <item><widget class="QFrame" name="pileFrame"><property name="maximumSize"><size><width>210</width><height>56</height></size></property><layout class="QHBoxLayout" name="pileLayout"><property name="leftMargin"><number>8</number></property><property name="topMargin"><number>2</number></property><property name="rightMargin"><number>8</number></property><property name="bottomMargin"><number>2</number></property><item><widget class="QLabel" name="pileStackLabel"><property name="toolTip"><string>中央牌堆</string></property><property name="text"><string>▥▥▥</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><widget class="QLabel" name="pileCountLabel"><property name="text"><string>0张</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></widget></item>
-      <item><widget class="QFrame" name="decisionActionPanel"><property name="maximumSize"><size><width>620</width><height>88</height></size></property><layout class="QVBoxLayout" name="decisionActionLayout"><property name="leftMargin"><number>7</number></property><property name="topMargin"><number>3</number></property><property name="rightMargin"><number>7</number></property><property name="bottomMargin"><number>3</number></property><property name="spacing"><number>2</number></property><item><widget class="QLabel" name="phaseLabel"><property name="text"><string>等待开局……</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="wordWrap"><bool>true</bool></property></widget></item><item><widget class="QProgressBar" name="aiProgressBar"><property name="visible"><bool>false</bool></property><property name="maximumSize"><size><width>16777215</width><height>18</height></size></property><property name="value"><number>0</number></property></widget></item><item><widget class="QLabel" name="actionLabel"><property name="text"><string>等待玩家行动</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="wordWrap"><bool>true</bool></property></widget></item></layout></widget></item>
-     </layout></widget></item>
-     <item row="1" column="2"><widget class="QFrame" name="opponentSeat2"><property name="minimumSize"><size><width>190</width><height>118</height></size></property><property name="maximumSize"><size><width>225</width><height>138</height></size></property><layout class="QVBoxLayout" name="opponentSeatLayout2"><property name="leftMargin"><number>7</number></property><property name="topMargin"><number>5</number></property><property name="rightMargin"><number>7</number></property><property name="bottomMargin"><number>5</number></property><item><layout class="QHBoxLayout" name="opponentTopLayout2"><item><widget class="QLabel" name="opponentAvatar2"><property name="minimumSize"><size><width>68</width><height>68</height></size></property><property name="maximumSize"><size><width>68</width><height>68</height></size></property><property name="text"><string>🐯</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><layout class="QVBoxLayout" name="opponentInfoLayout2"><item><layout class="QHBoxLayout" name="opponentNameLayout2"><item><widget class="QLabel" name="opponentLabel2"><property name="text"><string>玩家3</string></property></widget></item><item><widget class="QLabel" name="opponentRankBadge2"><property name="visible"><bool>false</bool></property><property name="minimumSize"><size><width>31</width><height>31</height></size></property><property name="maximumSize"><size><width>31</width><height>31</height></size></property><property name="text"><string>2</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></item><item><widget class="QLabel" name="opponentCount2"><property name="text"><string>11</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></item></layout></item><item><widget class="QLabel" name="opponentCards2"><property name="text"><string>▥▥▥▥▥</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></widget></item>
-     <item row="2" column="2"><widget class="QFrame" name="opponentSeat3"><property name="minimumSize"><size><width>190</width><height>118</height></size></property><property name="maximumSize"><size><width>225</width><height>138</height></size></property><layout class="QVBoxLayout" name="opponentSeatLayout3"><property name="leftMargin"><number>7</number></property><property name="topMargin"><number>5</number></property><property name="rightMargin"><number>7</number></property><property name="bottomMargin"><number>5</number></property><item><layout class="QHBoxLayout" name="opponentTopLayout3"><item><widget class="QLabel" name="opponentAvatar3"><property name="minimumSize"><size><width>68</width><height>68</height></size></property><property name="maximumSize"><size><width>68</width><height>68</height></size></property><property name="text"><string>🐯</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><layout class="QVBoxLayout" name="opponentInfoLayout3"><item><layout class="QHBoxLayout" name="opponentNameLayout3"><item><widget class="QLabel" name="opponentLabel3"><property name="text"><string>玩家4</string></property></widget></item><item><widget class="QLabel" name="opponentRankBadge3"><property name="visible"><bool>false</bool></property><property name="minimumSize"><size><width>31</width><height>31</height></size></property><property name="maximumSize"><size><width>31</width><height>31</height></size></property><property name="text"><string>3</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></item><item><widget class="QLabel" name="opponentCount3"><property name="text"><string>11</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></item></layout></item><item><widget class="QLabel" name="opponentCards3"><property name="text"><string>▥▥▥▥▥</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></widget></item>
-     <item row="3" column="1"><widget class="QFrame" name="actionFrame"><property name="maximumSize"><size><width>720</width><height>62</height></size></property><layout class="QHBoxLayout" name="actionLayout" stretch="0,1,1,1"><property name="leftMargin"><number>8</number></property><property name="topMargin"><number>4</number></property><property name="rightMargin"><number>8</number></property><property name="bottomMargin"><number>4</number></property><property name="spacing"><number>9</number></property><item><layout class="QHBoxLayout" name="rankLayout"><item><widget class="QLabel" name="rankPromptLabel"><property name="visible"><bool>false</bool></property><property name="text"><string>声明：</string></property></widget></item><item><widget class="QComboBox" name="rankCombo"><property name="visible"><bool>false</bool></property><item><property name="text"><string>8</string></property></item><item><property name="text"><string>9</string></property></item><item><property name="text"><string>10</string></property></item><item><property name="text"><string>J</string></property></item><item><property name="text"><string>Q</string></property></item><item><property name="text"><string>K</string></property></item><item><property name="text"><string>A</string></property></item></widget></item></layout></item><item><widget class="QPushButton" name="playButton"><property name="visible"><bool>false</bool></property><property name="minimumSize"><size><width>135</width><height>48</height></size></property><property name="text"><string>出 牌</string></property></widget></item><item><widget class="QPushButton" name="believeButton"><property name="visible"><bool>false</bool></property><property name="minimumSize"><size><width>135</width><height>48</height></size></property><property name="text"><string>相 信</string></property></widget></item><item><widget class="QPushButton" name="challengeButton"><property name="visible"><bool>false</bool></property><property name="minimumSize"><size><width>135</width><height>48</height></size></property><property name="text"><string>质 疑</string></property></widget></item></layout></widget></item>
-    </layout></widget></item>
-    <item><layout class="QHBoxLayout" name="bottomAreaLayout" stretch="1,0"><property name="spacing"><number>8</number></property><item><widget class="QFrame" name="handPanel"><property name="minimumSize"><size><width>0</width><height>170</height></size></property><layout class="QVBoxLayout" name="handPanelLayout"><property name="leftMargin"><number>7</number></property><property name="topMargin"><number>3</number></property><property name="rightMargin"><number>7</number></property><property name="bottomMargin"><number>3</number></property><property name="spacing"><number>2</number></property><item><widget class="QLabel" name="handTitleLabel"><property name="text"><string>你的手牌</string></property><property name="styleSheet"><string notr="true">color:#b99a65;font-size:12px;</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item><widget class="QScrollArea" name="handScrollArea"><property name="horizontalScrollBarPolicy"><enum>Qt::ScrollBarAlwaysOff</enum></property><property name="widgetResizable"><bool>true</bool></property><widget class="QWidget" name="handContainer"><property name="geometry"><rect><x>0</x><y>0</y><width>1150</width><height>142</height></rect></property><layout class="QGridLayout" name="handGridLayout"><property name="leftMargin"><number>0</number></property><property name="topMargin"><number>0</number></property><property name="rightMargin"><number>0</number></property><property name="bottomMargin"><number>0</number></property><property name="horizontalSpacing"><number>3</number></property><property name="verticalSpacing"><number>3</number></property></layout></widget></widget></item></layout></widget></item>
-     <item><widget class="QFrame" name="privateInfoFrame"><property name="minimumSize"><size><width>250</width><height>170</height></size></property><property name="maximumSize"><size><width>285</width><height>190</height></size></property><layout class="QVBoxLayout" name="privateInfoLayout"><property name="leftMargin"><number>10</number></property><property name="topMargin"><number>8</number></property><property name="rightMargin"><number>10</number></property><property name="bottomMargin"><number>8</number></property><property name="spacing"><number>4</number></property><item><widget class="QLabel" name="privateInfoTitle"><property name="text"><string>🎁  任务</string></property></widget></item><item><widget class="QLabel" name="taskLabel"><property name="text"><string>任务：等待发放</string></property><property name="wordWrap"><bool>true</bool></property></widget></item><item><widget class="QLabel" name="rewardLabel"><property name="visible"><bool>false</bool></property><property name="text"><string>奖励：暂无</string></property><property name="wordWrap"><bool>true</bool></property></widget></item><item><spacer name="privateInfoSpacer"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>12</height></size></property></spacer></item><item><widget class="QPushButton" name="rewardButton"><property name="visible"><bool>false</bool></property><property name="text"><string>使用奖励</string></property></widget></item><item><widget class="QPushButton" name="restartButton"><property name="visible"><bool>false</bool></property><property name="text"><string>重新开始</string></property></widget></item></layout></widget></item>
-    </layout></item>
-    <item><widget class="QFrame" name="hiddenSupportFrame"><property name="visible"><bool>false</bool></property><layout class="QVBoxLayout" name="hiddenSupportLayout"><item><widget class="QTextEdit" name="logEdit"><property name="readOnly"><bool>true</bool></property></widget></item><item><widget class="QLabel" name="rankingLabel"><property name="text"><string>排名内部状态</string></property></widget></item><item><widget class="QPushButton" name="exitButton"><property name="text"><string>退出</string></property></widget></item></layout></widget></item>
+   <layout class="QVBoxLayout" name="rootLayout" stretch="0,0,0,0">
+    <property name="spacing">
+     <number>5</number>
+    </property>
+    <property name="leftMargin">
+     <number>9</number>
+    </property>
+    <property name="topMargin">
+     <number>5</number>
+    </property>
+    <property name="rightMargin">
+     <number>9</number>
+    </property>
+    <property name="bottomMargin">
+     <number>7</number>
+    </property>
+    <item>
+     <widget class="QFrame" name="topBarFrame">
+      <layout class="QVBoxLayout" name="topBarOuterLayout">
+       <property name="spacing">
+        <number>1</number>
+       </property>
+       <property name="leftMargin">
+        <number>8</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>8</number>
+       </property>
+       <property name="bottomMargin">
+        <number>3</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="topBarLayout" stretch="1,4,1">
+         <item>
+          <widget class="QLabel" name="roomLabel">
+           <property name="text">
+            <string>房间号：114514</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="titleLabel">
+           <property name="text">
+            <string>──  虎 牌  ──</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="topRightLayout">
+           <item>
+            <spacer name="topRightSpacer">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="rulesButton">
+             <property name="minimumSize">
+              <size>
+               <width>38</width>
+               <height>38</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>38</width>
+               <height>38</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>规则说明</string>
+             </property>
+             <property name="text">
+              <string>⚙</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item alignment="Qt::AlignmentFlag::AlignHCenter">
+        <widget class="QLabel" name="eventStatusLabel">
+         <property name="maximumSize">
+          <size>
+           <width>520</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="visible">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>酒馆事件</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="tableSurfaceFrame">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>455</height>
+       </size>
+      </property>
+      <layout class="QGridLayout" name="tableGridLayout" rowstretch="0,1,1,0" columnstretch="0,1,0">
+       <property name="leftMargin">
+        <number>22</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>22</number>
+       </property>
+       <property name="bottomMargin">
+        <number>10</number>
+       </property>
+       <property name="horizontalSpacing">
+        <number>14</number>
+       </property>
+       <property name="verticalSpacing">
+        <number>7</number>
+       </property>
+       <item row="1" column="1" rowspan="2">
+        <widget class="QFrame" name="centerPlayFrame">
+         <property name="minimumSize">
+          <size>
+           <width>470</width>
+           <height>275</height>
+          </size>
+         </property>
+         <layout class="QVBoxLayout" name="centerPlayLayout" stretch="0,0,1,0,0">
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>12</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>12</number>
+          </property>
+          <property name="bottomMargin">
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QFrame" name="eventBannerFrame">
+            <property name="maximumSize">
+             <size>
+              <width>560</width>
+              <height>46</height>
+             </size>
+            </property>
+            <property name="visible">
+             <bool>false</bool>
+            </property>
+            <layout class="QHBoxLayout" name="eventBannerLayout">
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <property name="bottomMargin">
+              <number>3</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="eventLabel">
+               <property name="text">
+                <string>🍺  酒馆事件</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="lastPlayFrame">
+            <property name="maximumSize">
+             <size>
+              <width>430</width>
+              <height>82</height>
+             </size>
+            </property>
+            <property name="visible">
+             <bool>false</bool>
+            </property>
+            <layout class="QVBoxLayout" name="lastPlayLayout">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>7</number>
+             </property>
+             <property name="topMargin">
+              <number>4</number>
+             </property>
+             <property name="rightMargin">
+              <number>7</number>
+             </property>
+             <property name="bottomMargin">
+              <number>4</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="lastPlayPlayerLabel">
+               <property name="text">
+                <string>玩家2出牌</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="claimLabel">
+               <property name="text">
+                <string>2张K</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="cardStageFrame">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>112</height>
+             </size>
+            </property>
+            <layout class="QVBoxLayout" name="cardStageLayout">
+             <property name="spacing">
+              <number>1</number>
+             </property>
+             <property name="leftMargin">
+              <number>6</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>6</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item>
+              <layout class="QHBoxLayout" name="tableCardsLayout">
+               <item>
+                <spacer name="tableCardLeftSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>30</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="tableCard1">
+                 <property name="minimumSize">
+                  <size>
+                   <width>66</width>
+                   <height>92</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>72</width>
+                   <height>98</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>虎
+牌</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="tableCard2">
+                 <property name="minimumSize">
+                  <size>
+                   <width>66</width>
+                   <height>92</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>72</width>
+                   <height>98</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>虎
+牌</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="tableCard3">
+                 <property name="minimumSize">
+                  <size>
+                   <width>66</width>
+                   <height>92</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>72</width>
+                   <height>98</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>虎
+牌</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="tableCardRightSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>30</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QLabel" name="tableCardStatusLabel">
+               <property name="text">
+                <string>暗牌</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="pileFrame">
+            <property name="maximumSize">
+             <size>
+              <width>210</width>
+              <height>56</height>
+             </size>
+            </property>
+            <layout class="QHBoxLayout" name="pileLayout">
+             <property name="leftMargin">
+              <number>8</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>8</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="pileStackLabel">
+               <property name="toolTip">
+                <string>中央牌堆</string>
+               </property>
+               <property name="text">
+                <string>🂠</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="pileCountLabel">
+               <property name="text">
+                <string>0张</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="decisionActionPanel">
+            <property name="maximumSize">
+             <size>
+              <width>1200</width>
+              <height>88</height>
+             </size>
+            </property>
+            <layout class="QVBoxLayout" name="decisionActionLayout">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>7</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>7</number>
+             </property>
+             <property name="bottomMargin">
+              <number>3</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="phaseLabel">
+               <property name="text">
+                <string>等待开局……</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QProgressBar" name="aiProgressBar">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="visible">
+                <bool>false</bool>
+               </property>
+               <property name="value">
+                <number>0</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="actionLabel">
+               <property name="text">
+                <string>等待玩家行动</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QFrame" name="opponentSeat1">
+         <property name="minimumSize">
+          <size>
+           <width>230</width>
+           <height>76</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>310</width>
+           <height>86</height>
+          </size>
+         </property>
+         <layout class="QHBoxLayout" name="opponentSeatLayout1">
+          <property name="leftMargin">
+           <number>7</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>7</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="opponentAvatar1">
+            <property name="minimumSize">
+             <size>
+              <width>68</width>
+              <height>68</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>68</width>
+              <height>68</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>🐯</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="opponentInfoLayout1">
+            <item>
+             <layout class="QHBoxLayout" name="opponentNameLayout1">
+              <item>
+               <widget class="QLabel" name="opponentLabel1">
+                <property name="text">
+                 <string>玩家2</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="opponentRankBadge1">
+                <property name="minimumSize">
+                 <size>
+                  <width>31</width>
+                  <height>31</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>31</width>
+                  <height>31</height>
+                 </size>
+                </property>
+                <property name="visible">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>1</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="opponentCardsRow1">
+              <item>
+               <widget class="QLabel" name="opponentCards1">
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;🂠&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="opponentCount1">
+                <property name="text">
+                 <string>11</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0" rowspan="2">
+        <widget class="QFrame" name="humanPanel">
+         <property name="minimumSize">
+          <size>
+           <width>190</width>
+           <height>155</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>225</width>
+           <height>190</height>
+          </size>
+         </property>
+         <layout class="QVBoxLayout" name="humanPanelLayout">
+          <property name="leftMargin">
+           <number>8</number>
+          </property>
+          <property name="topMargin">
+           <number>7</number>
+          </property>
+          <property name="rightMargin">
+           <number>8</number>
+          </property>
+          <property name="bottomMargin">
+           <number>7</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="humanTopLayout">
+            <item>
+             <widget class="QLabel" name="humanAvatarLabel">
+              <property name="minimumSize">
+               <size>
+                <width>70</width>
+                <height>70</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>70</width>
+                <height>70</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>🐯</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="humanRankBadge">
+              <property name="minimumSize">
+               <size>
+                <width>31</width>
+                <height>31</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>31</width>
+                <height>31</height>
+               </size>
+              </property>
+              <property name="visible">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>1</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="playerInfoLabel">
+            <property name="text">
+             <string>玩家1（你）</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="humanCardsRow">
+            <item>
+             <widget class="QLabel" name="humanCardsLabel">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;🂠&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="humanCountLabel">
+              <property name="text">
+               <string>11</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QFrame" name="opponentSeat3">
+         <property name="minimumSize">
+          <size>
+           <width>190</width>
+           <height>118</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>225</width>
+           <height>138</height>
+          </size>
+         </property>
+         <layout class="QVBoxLayout" name="opponentSeatLayout3">
+          <property name="leftMargin">
+           <number>7</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>7</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="opponentTopLayout3">
+            <item>
+             <widget class="QLabel" name="opponentAvatar3">
+              <property name="minimumSize">
+               <size>
+                <width>68</width>
+                <height>68</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>68</width>
+                <height>68</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>🐯</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="opponentInfoLayout3">
+              <item>
+               <layout class="QHBoxLayout" name="opponentNameLayout3">
+                <item>
+                 <widget class="QLabel" name="opponentLabel3">
+                  <property name="text">
+                   <string>玩家4</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="opponentRankBadge3">
+                  <property name="minimumSize">
+                   <size>
+                    <width>31</width>
+                    <height>31</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>31</width>
+                    <height>31</height>
+                   </size>
+                  </property>
+                  <property name="visible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>3</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QLabel" name="opponentCount3">
+                <property name="text">
+                 <string>11</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="opponentCards3">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;🂠&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QFrame" name="actionFrame">
+         <property name="maximumSize">
+          <size>
+           <width>720</width>
+           <height>62</height>
+          </size>
+         </property>
+         <layout class="QHBoxLayout" name="actionLayout" stretch="0,1,1,1">
+          <property name="spacing">
+           <number>9</number>
+          </property>
+          <property name="leftMargin">
+           <number>8</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>8</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="rankLayout">
+            <item>
+             <widget class="QLabel" name="rankPromptLabel">
+              <property name="visible">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>声明：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="rankCombo">
+              <property name="visible">
+               <bool>false</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>8</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>9</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>10</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>J</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Q</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>K</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>A</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="playButton">
+            <property name="minimumSize">
+             <size>
+              <width>135</width>
+              <height>48</height>
+             </size>
+            </property>
+            <property name="visible">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>出 牌</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="believeButton">
+            <property name="minimumSize">
+             <size>
+              <width>135</width>
+              <height>48</height>
+             </size>
+            </property>
+            <property name="visible">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>相 信</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="challengeButton">
+            <property name="minimumSize">
+             <size>
+              <width>135</width>
+              <height>48</height>
+             </size>
+            </property>
+            <property name="visible">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>质 疑</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QFrame" name="opponentSeat2">
+         <property name="minimumSize">
+          <size>
+           <width>190</width>
+           <height>118</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>225</width>
+           <height>138</height>
+          </size>
+         </property>
+         <layout class="QVBoxLayout" name="opponentSeatLayout2">
+          <property name="leftMargin">
+           <number>7</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>7</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="opponentTopLayout2">
+            <item>
+             <widget class="QLabel" name="opponentAvatar2">
+              <property name="minimumSize">
+               <size>
+                <width>68</width>
+                <height>68</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>68</width>
+                <height>68</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>🐯</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="opponentInfoLayout2">
+              <item>
+               <layout class="QHBoxLayout" name="opponentNameLayout2">
+                <item>
+                 <widget class="QLabel" name="opponentLabel2">
+                  <property name="text">
+                   <string>玩家3</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="opponentRankBadge2">
+                  <property name="minimumSize">
+                   <size>
+                    <width>31</width>
+                    <height>31</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>31</width>
+                    <height>31</height>
+                   </size>
+                  </property>
+                  <property name="visible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>2</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QLabel" name="opponentCount2">
+                <property name="text">
+                 <string>11</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="opponentCards2">
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>🂠</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="bottomAreaLayout" stretch="1,0">
+      <property name="spacing">
+       <number>8</number>
+      </property>
+      <item>
+       <widget class="QFrame" name="handPanel">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>170</height>
+         </size>
+        </property>
+        <layout class="QVBoxLayout" name="handPanelLayout">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>7</number>
+         </property>
+         <property name="topMargin">
+          <number>3</number>
+         </property>
+         <property name="rightMargin">
+          <number>7</number>
+         </property>
+         <property name="bottomMargin">
+          <number>3</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="handTitleLabel">
+           <property name="styleSheet">
+            <string notr="true">color:#b99a65;font-size:12px;</string>
+           </property>
+           <property name="text">
+            <string>你的手牌</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QScrollArea" name="handScrollArea">
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="handContainer">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>1308</width>
+              <height>349</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="handGridLayout">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <property name="spacing">
+              <number>3</number>
+             </property>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="privateInfoFrame">
+        <property name="minimumSize">
+         <size>
+          <width>250</width>
+          <height>170</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>285</width>
+          <height>190</height>
+         </size>
+        </property>
+        <layout class="QVBoxLayout" name="privateInfoLayout">
+         <property name="spacing">
+          <number>4</number>
+         </property>
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="topMargin">
+          <number>8</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <property name="bottomMargin">
+          <number>8</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="privateInfoTitle">
+           <property name="text">
+            <string>🎁  任务</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="taskLabel">
+           <property name="text">
+            <string>任务：等待发放</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="rewardLabel">
+           <property name="visible">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>奖励：暂无</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="privateInfoSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>12</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="rewardButton">
+           <property name="visible">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>使用奖励</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="restartButton">
+           <property name="visible">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>重新开始</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QFrame" name="hiddenSupportFrame">
+      <property name="visible">
+       <bool>false</bool>
+      </property>
+      <layout class="QVBoxLayout" name="hiddenSupportLayout">
+       <item>
+        <widget class="QTextEdit" name="logEdit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="rankingLabel">
+         <property name="text">
+          <string>排名内部状态</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exitButton">
+         <property name="text">
+          <string>退出</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
    </layout>
   </widget>
  </widget>
- <resources><include location="LiarsTavern.qrc"/></resources>
+ <resources>
+  <include location="LiarsTavern.qrc"/>
+ </resources>
  <connections/>
 </ui>

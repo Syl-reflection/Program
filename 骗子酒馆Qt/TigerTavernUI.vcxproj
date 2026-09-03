@@ -10,7 +10,6 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-
   <PropertyGroup Label="Globals">
     <ProjectGuid>{13E7D827-0957-4FD2-8A5D-885850BEB068}</ProjectGuid>
     <Keyword>QtVS_v304</Keyword>
@@ -19,9 +18,7 @@
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -37,33 +34,25 @@
     <PlatformToolset Condition="'$(VisualStudioVersion)'=='18.0'">v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="QtSettings">
     <QtInstall>$(DefaultQtVersion)</QtInstall>
-    <QtModules>core;gui;widgets;svg</QtModules>
+    <QtModules>core;gui;widgets;svg;network</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="QtSettings">
     <QtInstall>$(DefaultQtVersion)</QtInstall>
-    <QtModules>core;gui;widgets;svg</QtModules>
+    <QtModules>core;gui;widgets;svg;network</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
-
-  <Target Name="QtMsBuildNotFound"
-          BeforeTargets="CustomBuild;ClCompile"
-          Condition="!Exists('$(QtMsBuild)\qt.targets') OR !Exists('$(QtMsBuild)\qt.props')">
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') OR !Exists('$(QtMsBuild)\qt.props')">
     <Error Text="没有找到 Qt/MSBuild。请安装或启用 Qt Visual Studio Tools 扩展，然后重新打开解决方案。" />
   </Target>
-
   <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="Shared" />
-
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(QtMsBuild)\Qt.props" Condition="Exists('$(QtMsBuild)\Qt.props')" />
@@ -72,14 +61,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(QtMsBuild)\Qt.props" Condition="Exists('$(QtMsBuild)\Qt.props')" />
   </ImportGroup>
-
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)obj\$(Configuration)\</IntDir>
     <TargetName>TigerTavernUI</TargetName>
   </PropertyGroup>
-
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -96,7 +83,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -116,29 +102,32 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="QtWidgetsApplication1.cpp" />
+    <ClCompile Include="LobbyDialog.cpp" />
+    <ClCompile Include="NetworkClient.cpp" />
+    <ClCompile Include="NetworkHost.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="QtWidgetsApplication1.h" />
+    <ClInclude Include="Protocol.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="QtWidgetsApplication1.h" />
+    <QtMoc Include="LobbyDialog.h" />
+    <QtMoc Include="NetworkClient.h" />
+    <QtMoc Include="NetworkHost.h" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="QtWidgetsApplication1.ui" />
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="LiarsTavern.qrc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\tavern_table_background.svg" />
     <None Include="使用说明.txt" />
     <None Include="整合修改说明.txt" />
     <None Include="UI编辑说明.txt" />
     <None Include="版本文件改动清单.txt" />
     <None Include="PDF要求落实说明.txt" />
   </ItemGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />

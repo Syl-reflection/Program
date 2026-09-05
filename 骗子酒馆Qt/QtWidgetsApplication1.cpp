@@ -383,7 +383,13 @@ void QtWidgetsApplication1::scheduleAiTurn(int playerIndex)
 
 void QtWidgetsApplication1::waitForRemote(int playerIndex)
 {
-    setPhase(Phase::Waiting, QStringLiteral("等待 %1 操作……").arg(players_[playerIndex].name));
+    // 关键：phase_ 必须反映远端玩家当前需要的动作（出牌/判断），否则广播给客户端的
+    // phase 会让其按钮失效，房主端 doPlay/doBelieve/doChallenge 也会拒绝远端操作。
+    if (claim_.valid) {
+        setPhase(Phase::Decide, QStringLiteral("等待 %1 判断……").arg(players_[playerIndex].name));
+    } else {
+        setPhase(Phase::Play, QStringLiteral("等待 %1 出牌……").arg(players_[playerIndex].name));
+    }
     updateUi();
     startWaitProgress(QStringLiteral("等待 %1 操作").arg(players_[playerIndex].name));
     if (mode_ == GameMode::Host && host_)

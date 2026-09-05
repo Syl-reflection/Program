@@ -628,6 +628,7 @@ void QtWidgetsApplication1::aiPlay()
     for (int card : cards)
         tablePile_.append(card);
     recordValidPlay(cards.size());
+    claimRevealed_ = false;
     addLog(QStringLiteral("%1 盖下 %2 张牌，声明：%2 张 %3。")
                .arg(player.name).arg(cards.size()).arg(cardName(declared)));
     showTableAction(QStringLiteral("【电脑出牌】%1 完成出牌：\n盖下 %2 张牌，并声明“%2 张 %3”。")

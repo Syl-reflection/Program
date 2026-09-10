@@ -22,6 +22,7 @@ add_executable(TigerTavernUI WIN32
     Protocol.h
     QtWidgetsApplication1.h
     QtWidgetsApplication1.ui
+    LiarsTavern.qrc
 )
 
 target_link_libraries(TigerTavernUI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)

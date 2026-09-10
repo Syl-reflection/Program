@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Protocol.h" />
+    <ClInclude Include="TavernVisuals.h" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QtWidgetsApplication1.h" />
@@ -120,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="QtWidgetsApplication1.ui" />
+    <QtRcc Include="LiarsTavern.qrc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="使用说明.txt" />

@@ -21,7 +21,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow{background:#080503;}
-QWidget#centralWidget{color:#f1dbad;font-family:&quot;Microsoft YaHei UI&quot;;border-image:url(:/ui/tavern_table_background.svg) 0 0 0 0 stretch stretch;}
+QWidget#centralWidget{color:#f1dbad;font-family:&quot;Microsoft YaHei UI&quot;;}
 QLabel{background:transparent;color:#f1dbad;}
 QFrame#topBarFrame{background:rgba(5,3,2,205);border:none;border-bottom:1px solid rgba(156,106,47,145);}
 QLabel#roomLabel{color:#b89052;font-size:13px;}
@@ -1386,7 +1386,7 @@ QPushButton#rewardButton,QPushButton#restartButton{background:rgba(72,39,14,235)
   </widget>
  </widget>
  <resources>
-  <include location="LiarsTavern.qrc"/>
+
  </resources>
  <connections/>
 </ui>

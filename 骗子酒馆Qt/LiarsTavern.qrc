@@ -1,0 +1,6 @@
+<RCC>
+ <qresource prefix="/ui">
+  <file alias="tavern-background.png">assets/ui/tavern-background.png</file>
+  <file alias="tiger-portraits.png">assets/ui/tiger-portraits.png</file>
+ </qresource>
+</RCC>

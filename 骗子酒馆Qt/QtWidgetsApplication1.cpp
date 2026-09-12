@@ -2048,6 +2048,36 @@ void QtWidgetsApplication1::updateUi()
         QTimer::singleShot(0, this, [this] { if (mode_ == GameMode::Host && host_) broadcastState(); });
 }
 
+void QtWidgetsApplication1::sortLocalHand()
+{
+    if (players_.isEmpty())
+        return;
+    QVector<int> &hand = players_[localPlayerId_].hand;
+    const int n = hand.size();
+    if (n <= 1)
+        return;
+
+    // 按点数升序（8→9→10→J→Q→K→A→Joker）得到下标置换，
+    // 同时把 selected_ 随牌一起移动，保持选中与手牌一一对应。
+    QVector<int> order(n);
+    for (int i = 0; i < n; ++i)
+        order[i] = i;
+    std::sort(order.begin(), order.end(), [&hand](int a, int b) {
+        return hand[a] < hand[b];
+    });
+
+    QVector<int> sortedHand(n);
+    QVector<bool> sortedSelected(n);
+    for (int i = 0; i < n; ++i) {
+        const int src = order[i];
+        sortedHand[i] = hand[src];
+        sortedSelected[i] = src < selected_.size() ? selected_[src] : false;
+    }
+    hand = sortedHand;
+    if (selected_.size() == n)
+        selected_ = sortedSelected;
+}
+
 void QtWidgetsApplication1::rebuildHandButtons()
 {
     while (QLayoutItem *item = handLayout_->takeAt(0)) {
@@ -2058,6 +2088,8 @@ void QtWidgetsApplication1::rebuildHandButtons()
         return;
     if (selected_.size() != players_[localPlayerId_].hand.size())
         selected_.fill(false, players_[localPlayerId_].hand.size());
+
+    sortLocalHand();
 
     for (int i = 0; i < players_[localPlayerId_].hand.size(); ++i) {
         const int card = players_[localPlayerId_].hand[i];

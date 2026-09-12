@@ -195,6 +195,7 @@ private:
 
     void updateUi();
     void rebuildHandButtons();
+    void sortLocalHand();
     void showTableCards(const QVector<int> &cards, bool revealed);
     void clearTableCards();
     void showTableAction(const QString &text, bool important = false);

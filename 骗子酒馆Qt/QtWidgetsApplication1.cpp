@@ -963,11 +963,17 @@ void QtWidgetsApplication1::doPlay(int playerIndex, const QVector<int> &indices,
 {
     if (phase_ != Phase::Play || currentPlayer_ != playerIndex
         || playerIndex < 0 || playerIndex >= players_.size()
-        || players_[playerIndex].finished
-        || !isLegalPlaySelection(playerIndex, indices, declaredRank))
+        || players_[playerIndex].finished)
         return;
 
     Player &player = players_[playerIndex];
+    // 下标由发送方按“点数升序”的手牌顺序给出；这里同样升序整理目标手牌，
+    // 保证房主端与客户端用相同顺序解读下标（联网模式下房主手里这份手牌可能仍是未排序的）。
+    std::sort(player.hand.begin(), player.hand.end());
+
+    if (!isLegalPlaySelection(playerIndex, indices, declaredRank))
+        return;
+
     claim_ = Claim{};
     claim_.valid = true;
     claim_.declarer = playerIndex;
